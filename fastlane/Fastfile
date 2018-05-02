@@ -1,0 +1,105 @@
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.50.0"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    sh "cd ..; yarn test"
+    sh "cd ..; yarn lint"
+  end
+
+  desc "Submit a new Beta Build to Apple TestFlight"
+  desc "This will also make sure the profile is up to date"
+  # lane :beta do
+  #   # match(type: "appstore") # more information: https://codesigning.guide
+  #   gym(scheme: "RCTAnimation") # Build your app - more options available
+  #   pilot
+
+  #   # sh "your_script.sh"
+  #   # You can also use other beta testing services here (run `fastlane actions`)
+  # end
+
+  lane :upgrade do
+    # version = get_version_number(xcodeproj: "./ios/getcaremobile.xcodeproj")
+    # increment_version_number(xcodeproj: "./ios/getcaremobile.xcodeproj")
+    # increment_build_number(xcodeproj: "./ios/getcaremobile.xcodeproj", build_number: version)
+
+    # git_add(path: ".")
+    # git_commit(path: ".", message: "Version Bump")
+    # sh "yarn react-native-version"
+    
+  end
+
+  desc "Deploy a new version to the App Store"
+  lane :production do
+
+    match(
+      readonly: true,
+      git_url: "git@bitbucket.org:gettydata/stellarsigner-certs.git",
+      git_branch: "master",
+      app_identifier: "com.gettydata.stellarsigner",
+      username: "devops@getty.io",
+      type: "appstore",
+      clone_branch_directly: true,
+      keychain_password: 'stellarsigner'
+    )
+
+    gym(
+      scheme: "StellarSigner",
+      project: "./ios/StellarSigner.xcodeproj",
+      include_bitcode: true
+    )
+
+	  pilot(distribute_external:false, skip_waiting_for_build_processing:true)
+  end
+
+  # lane :release do
+  #   # match(type: "appstore")
+  #   # snapshot
+  #   gym(scheme: "RCTAnimation") # Build your app - more options available
+  #   deliver(force: true)
+  #   # frameit
+  # end
+
+  # You can define as many lanes as you want
+
+  after_all do |lane|
+    # This block is called, only if the executed lane was successful
+
+    # slack(
+    #   message: "Successfully deployed new App Update."
+    # )
+  end
+
+  error do |lane, exception|
+    # slack(
+    #   message: exception.message,
+    #   success: false
+    # )
+  end
+end
+
+
+# More information about multiple platforms in fastlane: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Platforms.md
+# All available actions: https://docs.fastlane.tools/actions
+
+# fastlane reports which actions are used. No personal data is recorded.
+# Learn more at https://github.com/fastlane/fastlane#metrics
