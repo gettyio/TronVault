@@ -15,7 +15,7 @@ import sha256 from 'crypto-js/sha256';
 import { get, sortBy } from 'lodash'
 import ErrorMessage from './../components/UI/ErrorMessage'
 import SecurityForm from './../components/UI/SecurityForm'
-import DetailTabs from './../components/DetailTab/DetailTabs'
+// import DetailTabs from './../components/DetailTab/DetailTabs'
 // import { decodeFromXdr, signXdr } from './../utils/xdrUtils';
 import { generateKeypair } from './../utils/bipUtil';
 import PouchDB from 'pouchdb-react-native'

@@ -1,7 +1,6 @@
-import React, { Component, Fragment, Image } from 'react'
+import React, { Component, Fragment } from 'react'
+import { StatusBar } from 'react-native';
 import { Provider } from 'mobx-react'
-import { StackNavigator } from 'react-navigation'
-import { TabNavigator, TabBarBottom } from 'react-navigation'
 import Icon from 'react-native-vector-icons/Feather'
 import IconFA from 'react-native-vector-icons/FontAwesome'
 import HomeScreen from './screens/HomeScreen'
@@ -14,7 +13,7 @@ import AccountDetailScreen from './screens/AccountDetailScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ManageSeedScreen from './screens/ManageSeedScreen';
 import store from './store'
-console.disableYellowBox = true;
+import { TabNavigator, TabBarBottom, StackNavigator} from 'react-navigation'
 
 const NavigationStack = TabNavigator(
   {
@@ -133,6 +132,12 @@ const RootStack = StackNavigator(
 
 export default (() => (
   <Provider appStore={store} >
-    <RootStack />
+		<Fragment>
+			<StatusBar
+				backgroundColor="#6a51ae"
+				barStyle="light-content"
+			/>
+			<RootStack />
+		</Fragment>
   </Provider>
 ))
