@@ -106,7 +106,7 @@ export const SecretLabel = styled.Text`
   color: white;
   font-size: 12px; 
   margin-bottom: 8px;
-  font-weight: ${props => (props.weight ? props.weight : 'normal')}
+  font-weight: ${props => (props.weight ? props.weight : 'normal')};
 `
 
 export const SeedWord = styled.Text`

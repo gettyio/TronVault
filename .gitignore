@@ -56,3 +56,4 @@ buck-out/
 #
 haul-debug.log
 bip39.tests.js
+offline.tests.js
