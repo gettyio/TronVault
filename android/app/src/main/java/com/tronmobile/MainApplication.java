@@ -3,6 +3,7 @@ package com.tronmobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import org.reactnative.camera.RNCameraPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import dog.craftz.sqlite_2.RNSqlite2Package;
 import com.cboy.rn.splashscreen.SplashScreenReactPackage;
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNCameraPackage(),
             new VectorIconsPackage(),
             new RNSqlite2Package(),
             new SplashScreenReactPackage(),

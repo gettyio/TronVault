@@ -6621,6 +6621,13 @@ react-native-app-link@^0.4.0:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/react-native-app-link/-/react-native-app-link-0.4.1.tgz#19095baf4ff53d5c4346a8bc67f5fa2fd1e0aa4c"
 
+react-native-camera@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-1.1.2.tgz#a93c389c522c8909c564f04c4a86072909259d07"
+  dependencies:
+    lodash "^4.17.4"
+    prop-types "^15.5.10"
+
 react-native-device-info@^0.21.4:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.21.4.tgz#364d893b3e00d4422c7b02e7e26952fe181f57d2"
@@ -6669,6 +6676,10 @@ react-native-modal@^5.0.0:
     prop-types "^15.6.1"
     react-native-animatable "^1.2.4"
 
+react-native-permissions@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-1.1.1.tgz#4876004681ff8556454613d85249b01baff9b35b"
+
 react-native-qrcode:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/react-native-qrcode/-/react-native-qrcode-0.2.6.tgz#dd92f151c118860092af9fa5bc0995f2f9dddb16"
@@ -6676,6 +6687,13 @@ react-native-qrcode:
     create-react-class "^15.6.0"
     prop-types "^15.5.10"
     qr.js "0.0.0"
+
+react-native-qrcode-scanner@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.0.1.tgz#96b18d8058f4b472bda4b34f8a08fddbc33d50eb"
+  dependencies:
+    prop-types "^15.5.10"
+    react-native-permissions "^1.1.1"
 
 react-native-safe-area-view@^0.7.0:
   version "0.7.0"

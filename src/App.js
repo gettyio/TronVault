@@ -12,6 +12,7 @@ import TransactionDetailScreen from './screens/TransactionDetailScreen'
 import AccountDetailScreen from './screens/AccountDetailScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ManageSeedScreen from './screens/ManageSeedScreen';
+import QRCodeReaderScreen from './screens/QRCodeReaderScreen';
 import store from './store'
 import { TabNavigator, TabBarBottom, StackNavigator} from 'react-navigation'
 
@@ -122,10 +123,13 @@ const RootStack = StackNavigator(
 		},
 		ManageSeed: {
 			screen: ManageSeedScreen
+		},
+		QRCodeReader: {
+			screen: QRCodeReaderScreen
 		}
   },
   {
-    initialRouteName: 'AuthModal',
+    initialRouteName: 'QRCodeReader',
     mode: 'modal'
   }
 );

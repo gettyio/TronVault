@@ -152,6 +152,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-camera')
     compile project(':react-native-vector-icons')
     compile project(':react-native-sqlite-2')
     compile project(':react-native-splash-screen')
