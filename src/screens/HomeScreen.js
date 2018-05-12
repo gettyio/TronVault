@@ -242,8 +242,8 @@ class HomeScreen extends Component {
 						<CloseButton onPress={this.toggleAddModal}>
 							<Icon name="x-circle" color="white" size={32} />
 						</CloseButton>
-						{/* <TransactionForm /> */}
-						<SendForm />
+						<TransactionForm />
+						{/* <SendForm /> */}
 					</SafeAreaView>
 				</Modal>
 				<StatusBar barStyle="light-content" />

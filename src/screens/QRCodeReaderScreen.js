@@ -5,30 +5,72 @@ import {
   Text,
   TouchableOpacity,
   Linking,
-  Alert
+  Alert,
+  SafeAreaView
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
+import Icon from 'react-native-vector-icons/Feather'
+import { observer, inject } from 'mobx-react';
+import {
+  Screen,
+  ContainerFlex,
+  Container,
+  Header,
+  Title,
+  TitleWrapper,
+  LoadButtonWrapper,
+  LoadButton
+} from './styled';
 
+@inject('appStore') @observer
 class QRCodeReaderScreen extends Component {
-	onSuccess(e) {
-    const { data } = e
-    this.props.navigation.goBack()
-    this.props.navigation.state.params.callback(JSON.parse(data))
-  }
 
+  static navigationOptions = ({ navigation }) => {
+    const params = navigation.state.params || {};
+
+    return {
+      header: (
+        <SafeAreaView style={{ backgroundColor: '#2e3666' }}>
+          <Header>
+            <TitleWrapper>
+              <Title>Sign Transactions</Title>
+            </TitleWrapper>
+            <LoadButtonWrapper>
+              <LoadButton onPress={() => navigation.goBack()}>
+                <Icon name="x-circle" color="white" size={32} />
+              </LoadButton>
+            </LoadButtonWrapper>
+          </Header>
+        </SafeAreaView>
+      )
+    };
+  };
+
+  onSuccess(e) {
+    const { appStore } = this.props;
+    const { data } = e
+    const qrCodeData = JSON.parse(data);
+    appStore.set('currentTransaction', qrCodeData);
+    this.props.navigation.navigate('TransactionDetail');
+    this.props.navigation.goBack();
+    // this.props.navigation.state.params.callback(JSON.parse(data))
+  }
+  componentDidMount() {
+    const { appStore } = this.props;
+    const qrCodeData = {"data":"Cgdw1s/sr7Us","type":"SEND","URL":"http://192.168.0.7:8000/#/user/validate","pk":"27bgx6xgnsp3wzNhtzjjGixNWjbQf9medaY"}
+    appStore.set('currentTransaction', qrCodeData);
+    this.props.navigation.navigate('TransactionDetail', {
+      data: qrCodeData
+    })
+  }
   render() {
     return (
       <QRCodeScanner
         onRead={this.onSuccess.bind(this)}
         topContent={
           <Text style={styles.centerText}>
-            Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
+            Scan the transaction to be submitted
           </Text>
-        }
-        bottomContent={
-          <TouchableOpacity style={styles.buttonTouchable}>
-            <Text style={styles.buttonText}>OK. Got it!</Text>
-          </TouchableOpacity>
         }
       />
     );
