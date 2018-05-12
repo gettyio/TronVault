@@ -55,14 +55,7 @@ class QRCodeReaderScreen extends Component {
     this.props.navigation.goBack();
     // this.props.navigation.state.params.callback(JSON.parse(data))
   }
-  componentDidMount() {
-    const { appStore } = this.props;
-    const qrCodeData = {"data":"Cgdw1s/sr7Us","type":"SEND","URL":"http://192.168.0.7:8000/#/user/validate","pk":"27bgx6xgnsp3wzNhtzjjGixNWjbQf9medaY"}
-    appStore.set('currentTransaction', qrCodeData);
-    this.props.navigation.navigate('TransactionDetail', {
-      data: qrCodeData
-    })
-  }
+
   render() {
     return (
       <QRCodeScanner
