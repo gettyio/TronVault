@@ -227,6 +227,11 @@ class HomeScreen extends Component {
 		}
 	}
 
+	openTransaction = () =>{
+		this.toggleAddModal();
+		this.props.navigation.navigate('TransactionDetail');
+        this.props.navigation.goBack();
+	}
 	render() {
 		const { appStore, navigation } = this.props
 		const { transactions, isLoadingList } = this.state;
@@ -242,8 +247,8 @@ class HomeScreen extends Component {
 						<CloseButton onPress={this.toggleAddModal}>
 							<Icon name="x-circle" color="white" size={32} />
 						</CloseButton>
-						<TransactionForm />
-						{/* <SendForm /> */}
+						{/* <TransactionForm /> */}
+						<SendForm openTransaction={this.openTransaction} />
 					</SafeAreaView>
 				</Modal>
 				<StatusBar barStyle="light-content" />

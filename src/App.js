@@ -12,15 +12,11 @@ import TransactionDetailScreen from './screens/TransactionDetailScreen'
 import AccountDetailScreen from './screens/AccountDetailScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ManageSeedScreen from './screens/ManageSeedScreen';
-import QRCodeReaderScreen from './screens/QRCodeReaderScreen';
 import store from './store'
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation'
 
 const NavigationStack = TabNavigator(
   {
-    QRCodeReader: {
-      screen: QRCodeReaderScreen
-    },
     Home: {
       screen: HomeScreen
     },
@@ -46,8 +42,6 @@ const NavigationStack = TabNavigator(
           iconName = `qrcode`
         } else if (routeName === 'Home') {
           iconName = `home`
-        } else if (routeName === 'QRCodeReader') {
-          iconName = `list`
         }
 
         if (iconName === 'qrcode') {

@@ -1,5 +1,9 @@
 import React, { Component, Fragment } from 'react'
-import { SafeAreaView, View, Text, Alert, Clipboard, TouchableOpacity, ScrollView, Linking, Picker } from 'react-native'
+import {
+	SafeAreaView, View, Text, Alert,
+	Clipboard, ActivityIndicator,
+	TouchableOpacity, ScrollView, Linking, Picker
+} from 'react-native'
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view'
 import Button from 'react-native-micro-animated-button'
 import Icon from 'react-native-vector-icons/Feather'
@@ -21,6 +25,7 @@ import { signDataTransaction } from "../utils/transactionUtil";
 import PouchDB from 'pouchdb-react-native'
 import SQLite from 'react-native-sqlite-2'
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite'
+import { getTransactionDetails } from '../utils/transactionUtil';
 import {
 	Screen,
 	ContainerFlex,
@@ -31,8 +36,20 @@ import {
 	LoadButtonWrapper,
 	LoadButton
 } from './styled';
-import { consolidateStreamedStyles } from 'styled-components';
+import styled from 'styled-components';
 
+const DetailBox = styled.View`
+flex-direction: column;
+background-color: white;
+border-radius: 5px;
+justify-content: flex-start;
+padding: 5px;
+margin: 5px;
+`
+const DetailLabel = styled.Text`
+font-size: 15px;
+ margin: 6px;
+`
 
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite)
 PouchDB.plugin(SQLiteAdapter)
@@ -53,7 +70,7 @@ class TransactionDetail extends Component {
 							<Title>Transaction Detail</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.goBack()}>
+							<LoadButton onPress={() => navigation.navigate('Home')}>
 								<Icon name="x-circle" color="white" size={32} />
 							</LoadButton>
 						</LoadButtonWrapper>
@@ -77,18 +94,23 @@ class TransactionDetail extends Component {
 		secretSelected: null,
 		showSecurityForm: false,
 		loadingSign: false,
+		loadingData: true,
+		transactionDetail: {},
 	}
 
 	componentDidMount() {
 		this.loadData();
 	}
 
-	loadData = () => {
+	loadData = async () => {
 		const { appStore } = this.props;
 		const currentTransaction = appStore.get('currentTransaction');
-		const pkFromQR = currentTransaction.pk;
+		let transactionDetail = {};
 		try {
+			const pkFromQR = currentTransaction.pk;
 			let self = this;
+			transactionDetail = await getTransactionDetails(currentTransaction.data);
+			console.log('lul', transactionDetail);
 			db.allDocs({
 				include_docs: true
 			}).then((res) => {
@@ -102,10 +124,18 @@ class TransactionDetail extends Component {
 				const seed = appStore.get('seed');
 				// console.log("secretformqr", secretFromQR);
 				// console.log("keypair", keypair);
-				self.setState({ secrets, secretSelected: secretFromQR, options, isLoadingList: false });
+				self.setState({
+					secrets,
+					transactionDetail: transactionDetail[0],
+					secretSelected: secretFromQR,
+					options,
+					isLoadingList: false
+				});
 			})
 		} catch (error) {
 			alert(error.message)
+		} finally {
+			this.setState({ loadingData: false });
 		}
 	}
 
@@ -206,15 +236,14 @@ class TransactionDetail extends Component {
 		const { secrets, secretSelected } = this.state;
 		const secret = secrets[index]
 
-		//Mudei aqui
 		this.showConfirmSignatureAlert(secretSelected)
 	}
 
 
 	confirmSignTransaction = async secret => {
-		this.setState({ loadingSign: true });
 		const { appStore, navigation } = this.props
 		const currentTransaction = appStore.get('currentTransaction');
+		this.signButton.load();
 		try {
 			const seed = appStore.get('seed');
 			const keypair = generateTronKeypair(seed, secret.vn);
@@ -225,22 +254,16 @@ class TransactionDetail extends Component {
 			const transactionString = await signDataTransaction(sk, currentTransaction.data);
 
 			currentTransaction.URL += `?tx=${transactionString}`
-			// console.log("URL", currentTransaction.URL);
+			const supported = await Linking.canOpenURL(currentTransaction.URL)
 
-			Linking.canOpenURL(currentTransaction.URL).then(supported => {
-				if (!supported) {
-					console.log('Can\'t handle url: ' + currentTransaction.URL);
-				} else {
-					return Linking.openURL(currentTransaction.URL);
-				}
-			}).catch(err => console.error('An error occurred', err));
-			// const signedTx = signXdr(data);
-			// this.saveCurrentTransaction(signedTx);
-			navigation.navigate('TransactionDetail');
+			Linking.canOpenURL(currentTransaction.URL);
+			if (supported) Linking.openURL(currentTransaction.URL);
+
+			navigation.navigate('Home');
 		} catch (error) {
-			alert(error.message)
+			alert(error.message || error)
 		} finally {
-			this.setState({ loadingSign: false });
+			this.signButton.reset();
 
 		}
 	}
@@ -301,7 +324,7 @@ class TransactionDetail extends Component {
 				[
 					{ text: 'Cancel', onPress: () => { }, style: 'cancel' },
 					{
-						text: 'Confirm',
+						text: 'Confirm the transaction',
 						onPress: () => this.confirmSignTransaction(secret.doc)
 					}
 				],
@@ -312,33 +335,15 @@ class TransactionDetail extends Component {
 		}
 	}
 
-
 	render() {
 		const { appStore, toggleModal } = this.props
-		const { showSecurityForm, options, secrets, secretSelected } = this.state
+		const { showSecurityForm, options, secrets, secretSelected, loadingData, transactionDetail } = this.state
 		const currentTransaction = appStore.get('currentTransaction');
 		const securityFormError = appStore.get('securityFormError')
-		if (currentTransaction && currentTransaction.type === 'error') {
-			return (
-				<Container>
-					{/* <ErrorMessage tx={currentTransaction} /> */}
-					<Button
-						ref={ref => (this.deleteTransactionButton = ref)}
-						foregroundColor={'white'}
-						backgroundColor={'#ff3b30'}
-						errorColor={'#ff3b30'}
-						errorIconColor={'white'}
-						successIconColor={'white'}
-						onPress={this.deleteTransaction}
-						successIconName="check"
-						label="Delete"
-						maxWidth={100}
-						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
-					/>
-				</Container>
-			)
-		}
 
+		if (loadingData) {
+			return <ActivityIndicator size="large" color="#0000ff" />
+		}
 		if (!secretSelected) {
 			return (<ContainerFlex style={{ backgroundColor: '#d5eef7', justifyContent: 'center' }}>
 				<Text
@@ -346,84 +351,49 @@ class TransactionDetail extends Component {
 						fontWeight: 'bold',
 						fontSize: 15,
 						alignSelf: 'center',
-						color: 'red',
+						color: '#2e3666',
 					}}
 				> There is not secret bounded to this transaction</Text>
-				<TouchableOpacity
+				<Button
+					foregroundColor={'white'}
+					backgroundColor={'#ff3b30'}
+					successColor={'#ff3b30'}
+					errorColor={'#ff3b30'}
+					errorIconColor={'white'}
+					successIconColor={'white'}
 					onPress={() => this.props.navigation.navigate('Secrets')}
-					style={{
-						width: '20%',
-						height: 40,
-						marginTop: 10,
-						alignSelf: 'center',
-						borderColor: 'red',
-						borderWidth: 1,
-						backgroundColor: 'white',
-						borderRadius: 20,
-						alignItems: 'center',
-						justifyContent: 'center'
-					}}>
-					<Text>Back</Text>
-				</TouchableOpacity>
+					successIconName="check"
+					label="Back"
+					maxWidth={100}
+					style={{ borderWidth: 0, alignSelf: 'center' }}
+				/>
 			</ContainerFlex>
 			)
 		}
 		return (
-			<ContainerFlex style={{ backgroundColor: '#d5eef7', justifyContent: 'center', alignItems: 'center' }}>
-				<Text> This is your transaction</Text>
-				<Text>{currentTransaction.data}</Text>
-				{secretSelected &&
-					<View style={{ flexDirection: 'column', alignItems: 'center' }}>
-						<Text style={{ fontWeight: 'bold', margin: 5 }}>Account:  {secretSelected.doc.alias}</Text>
-						<Text style={{ fontWeight: '500', }}>{secretSelected.doc.pk}</Text>
-					</View>}
-				{this.state.loadingSign ?
-					<Text> Processing transaction</Text> :
-					<TouchableOpacity
-						onPress={this.submitSignature}
-						style={{
-							width: '40%',
-							height: 50,
-							marginTop: 50,
-							alignSelf: 'center',
-							borderColor: 'green',
-							borderWidth: 1,
-							backgroundColor: 'white',
-							borderRadius: 20,
-							alignItems: 'center',
-							justifyContent: 'center'
-						}}>
-						<Text>Sign</Text>
-					</TouchableOpacity>}
+			<ContainerFlex style={{ backgroundColor: '#d5eef7', justifyContent: 'center' }}>
+				<DetailBox>
+					<DetailLabel>Account:  {secretSelected.doc.alias}</DetailLabel>
+					<DetailLabel style={{ fontWeight: 'bold' }}>From:</DetailLabel>
+					<DetailLabel>{transactionDetail.from}</DetailLabel>
+					<DetailLabel style={{ fontWeight: 'bold' }}>To:</DetailLabel>
+					<DetailLabel>{transactionDetail.to}</DetailLabel>
+					<DetailLabel>Amount:  {transactionDetail.amount} TRX</DetailLabel>
+				</DetailBox>
+				<Button
+					ref={ref => (this.signButton = ref)}
+					onPress={() => this.confirmSignTransaction(secretSelected.doc)}
+					foregroundColor={'white'}
+					backgroundColor={'#4cd964'}
+					successColor={'#4cd964'}
+					errorColor={'#ff3b30'}
+					errorIconColor={'white'}
+					successIconColor={'white'}
+					successIconName="check"
+					label="Sign"
+					style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
+				/>
 
-				{/* {!showSecurityForm && (
-					<DetailTabs
-						currentTransaction={currentTransaction}
-						copyToClipboard={this.copyToClipboard}
-						showConfirmDelete={this.showConfirmDelete}
-						rejectTransaction={this.rejectTransaction}
-						signTransaction={this.signTransaction}
-					/>
-				)} */}
-				{/* {showSecurityForm && (
-							<SecurityForm
-								error={securityFormError}
-								submit={this.authTransaction}
-								close={toggleModal}
-								closeAfterSubmit={false}
-							/>
-						)} */}
-
-				{(options.length > 0) && (
-					<ActionSheet
-						ref={o => (this.actionSheet = o)}
-						title={'Select a Secret'}
-						options={options}
-						cancelButtonIndex={1}
-						destructiveButtonIndex={2}
-						onPress={this.submitSignature}
-					/>
-				)}
 			</ContainerFlex>
 		)
 	}

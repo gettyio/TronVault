@@ -70,7 +70,7 @@ class AccountDetailScreen extends Component {
 			const keypair = this.getSecret();
 			this.revealSecretBtn.success();
 			setTimeout(this.revealSecretBtn.reset, 1000)
-			Clipboard.setString(keypair.pwd);
+			Clipboard.setString(keypair.privateKey);
 			this.setState({ isSecurityRequired: false, isAuthenticated: true });
 			appStore.set('securityFormError', undefined)
 		} else {
