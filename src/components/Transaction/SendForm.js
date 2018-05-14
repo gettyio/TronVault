@@ -139,7 +139,6 @@ class SendForm extends Component {
         this.setState({ balances: newBalances });
     }
 
-    closeModal
 
     onSuccessQRCode(e) {
         const { appStore } = this.props;
