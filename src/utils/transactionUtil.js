@@ -86,6 +86,5 @@ export const signDataTransaction = async (sk, transactionString) => {
     let transactionSignedBytes = transactionSigned.serializeBinary();
     let transactionSignedString = byteArray2hexStr(transactionSignedBytes);
     
-    // console.log("TRANA!", transactionSignedString);
     return transactionSignedString;
 }

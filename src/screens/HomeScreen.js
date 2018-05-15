@@ -64,7 +64,7 @@ class HomeScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Tron Mobile</Title>
+							<Title>Transactions</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={params.toggleAddModal}>
