@@ -78,16 +78,14 @@ export const getTransactionDetails = async (data) => {
     return transactionDetail;
 
 }
-export const signDataTransaction = async (privatekey, data) => {
-    let transaction;
-    if (typeof data === 'string') {
-        let bytesDecode = new Base64().decodeToByteArray(data);
-        transaction = Transaction.deserializeBinary(bytesDecode);
-    } else if (data instanceof Transaction) {
-        transaction = data;
-    }
-    let transactionSigned = signTransaction(hexStr2byteArray(privatekey), transaction);
-    let transactionBytes = transactionSigned.serializeBinary();
-    let transactionString = byteArray2hexStr(transactionBytes);
-    return transactionString;
+
+export const signDataTransaction = async (sk, transactionString) => {
+    
+    let transactionDecoded = Transaction.deserializeBinary(hexStr2byteArray(transactionString));
+    let transactionSigned = signTransaction(hexStr2byteArray(sk), transactionDecoded);
+    let transactionSignedBytes = transactionSigned.serializeBinary();
+    let transactionSignedString = byteArray2hexStr(transactionSignedBytes);
+    
+    // console.log("TRANA!", transactionSignedString);
+    return transactionSignedString;
 }

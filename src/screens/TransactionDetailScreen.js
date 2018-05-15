@@ -95,7 +95,7 @@ class TransactionDetail extends Component {
 		showSecurityForm: false,
 		loadingSign: false,
 		loadingData: true,
-		transactionDetail: {},
+		transactionDetail: null,
 	}
 
 	componentDidMount() {
@@ -103,14 +103,15 @@ class TransactionDetail extends Component {
 	}
 
 	loadData = async () => {
+		const test = await signDataTransaction('a', 'a');
 		const { appStore } = this.props;
 		const currentTransaction = appStore.get('currentTransaction');
 		let transactionDetail = {};
 		try {
 			const pkFromQR = currentTransaction.pk;
 			let self = this;
-			transactionDetail = await getTransactionDetails(currentTransaction.data);
-			console.log('lul', transactionDetail);
+			//TODO 
+			// transactionDetail = await getTransactionDetails(currentTransaction.data);
 			db.allDocs({
 				include_docs: true
 			}).then((res) => {
@@ -248,12 +249,16 @@ class TransactionDetail extends Component {
 			const seed = appStore.get('seed');
 			const keypair = generateTronKeypair(seed, secret.vn);
 
+			const transactionString = currentTransaction.data;
 			const pk = keypair.base58Address;
 			const sk = keypair.privateKey;
 
-			const transactionString = await signDataTransaction(sk, currentTransaction.data);
+			const transactionSignedString = await signDataTransaction(sk, transactionString);
 
-			currentTransaction.URL += `?tx=${transactionString}`
+		
+			const type = currentTransaction.type;
+			currentTransaction.URL += `?tx=${transactionSignedString}&pk=${pk}`;
+
 			const supported = await Linking.canOpenURL(currentTransaction.URL)
 
 			Linking.canOpenURL(currentTransaction.URL);
@@ -374,11 +379,14 @@ class TransactionDetail extends Component {
 			<ContainerFlex style={{ backgroundColor: '#d5eef7', justifyContent: 'center' }}>
 				<DetailBox>
 					<DetailLabel>Account:  {secretSelected.doc.alias}</DetailLabel>
-					<DetailLabel style={{ fontWeight: 'bold' }}>From:</DetailLabel>
-					<DetailLabel>{transactionDetail.from}</DetailLabel>
-					<DetailLabel style={{ fontWeight: 'bold' }}>To:</DetailLabel>
-					<DetailLabel>{transactionDetail.to}</DetailLabel>
-					<DetailLabel>Amount:  {transactionDetail.amount} TRX</DetailLabel>
+					{transactionDetail &&
+						<Fragment>
+							<DetailLabel style={{ fontWeight: 'bold' }}>From:</DetailLabel>
+							<DetailLabel>{transactionDetail.from}</DetailLabel>
+							<DetailLabel style={{ fontWeight: 'bold' }}>To:</DetailLabel>
+							<DetailLabel>{transactionDetail.to}</DetailLabel>
+							<DetailLabel>Amount:  {transactionDetail.amount} TRX</DetailLabel>
+						</Fragment>}
 				</DetailBox>
 				<Button
 					ref={ref => (this.signButton = ref)}
