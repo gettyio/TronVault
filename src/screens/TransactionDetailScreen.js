@@ -107,7 +107,6 @@ class TransactionDetail extends Component {
 	}
 
 	loadData = async () => {
-		// const test = signDataTransaction('a', 'a');
 		const { appStore } = this.props;
 		const currentTransaction = appStore.get('currentTransaction');
 		this.setState({ loadingData: true });
@@ -246,11 +245,9 @@ class TransactionDetail extends Component {
 	confirmSignTransaction = async secret => {
 		const { appStore, navigation } = this.props
 		const currentTransaction = appStore.get('currentTransaction');
-		this.signButton.load();
 		try {
 			const seed = appStore.get('seed');
 			const keypair = generateTronKeypair(seed, secret.vn);
-
 			const transactionString = currentTransaction.data;
 			const pk = keypair.base58Address;
 			const sk = keypair.privateKey;
@@ -385,8 +382,6 @@ class TransactionDetail extends Component {
 				<Button
 					onPress={() => this.confirmSignTransaction(secretSelected.doc)}
 					ref={ref => (this.signButton = ref)}
-					foregroundColor={'#4cd964'}
-					onPress={this.savePassword}
 					foregroundColor={'white'}
 					backgroundColor={'#4cd964'}
 					successColor={'#4cd964'}
