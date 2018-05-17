@@ -98,18 +98,19 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "com.tronmobile"
-        minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 10
+        minSdkVersion 17
+        targetSdkVersion 23
+        versionCode 25
         versionName "1.2.25"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+				multiDexEnabled true
     }
     splits {
         abi {
@@ -152,15 +153,20 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-sqlite-2')
+    compile project(':react-native-camera')
+    compile project(':react-native-device-info')
     compile project(':react-native-splash-screen')
     compile project(':react-native-sensitive-info')
+    compile project(':react-native-sqlite-2')
+    compile project(':react-native-vector-icons')
     compile project(':react-native-gesture-handler')
-    compile project(':react-native-device-info')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
+    compile ("com.android.support:multidex:1.0.1")
+    compile ("com.android.support:support-v4:26.1.0") {
+        force = true //<-- force dependency resolution to 26.0.1 in my case
+    }
 }
 
 // Run this once to be able to run the application with BUCK

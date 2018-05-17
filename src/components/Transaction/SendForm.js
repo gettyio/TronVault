@@ -6,7 +6,8 @@ import {
     ScrollView,
     KeyboardAvoidingView,
     Picker,
-    ActivityIndicator
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 
 import { observer, inject } from 'mobx-react';
@@ -15,6 +16,7 @@ import Button from 'react-native-micro-animated-button';
 import PouchDB from 'pouchdb-react-native';
 import SQLite from 'react-native-sqlite-2';
 import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import styled from 'styled-components';
 
 import { Send, GetBalances } from './../../utils/transactionUtil';
@@ -64,7 +66,7 @@ class SendForm extends Component {
     }
 
     componentDidMount() {
-        this.loadData();
+        // this.loadData();
     }
 
     sendTransaction = async () => {
@@ -137,33 +139,64 @@ class SendForm extends Component {
         this.setState({ balances: newBalances });
     }
 
+
+    onSuccessQRCode(e) {
+        const { appStore } = this.props;
+        const { data } = e
+        try {
+            const qrCodeData = JSON.parse(data);
+            if (qrCodeData.token && qrCodeData.token === 'tron-wallet-getty') {
+                appStore.set('currentTransaction', qrCodeData);
+                this.props.openTransaction();
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            Alert.alert(
+                'QRCode Invalid',
+                'This is not a valid QRCode',
+                [
+                    {
+                        text: 'OK', onPress: () => {
+                            appStore.set('isAddModalVisible', false)
+                        }
+                    },
+                ],
+                { cancelable: false }
+            )
+        }
+
+        // this.props.navigation.navigate('TransactionDetail');
+        // this.props.navigation.goBack();
+        // this.props.navigation.state.params.callback(JSON.parse(data))
+    }
     render() {
-        let picker = !this.state.loadingData ?
-            <Picker
-                style={{ flex: 1, height: 50 }}
-                selectedValue={this.state.balanceSelected}
-                onValueChange={balanceSelected => this.setState({ balanceSelected })}>
-                {this.state.balances.length ?
-                    this.state.balances.map((blc, i) =>
-                        <Picker.Item
-                            key={i}
-                            label={`Alias:${blc.alias} ${blc.name}:${blc.balance}`}
-                            value={blc}
-                        />) :
-                    <Picker.Item key={0} label={'No accounts available'} value={null} />
-                }
-            </Picker> :
-            <ActivityIndicator size="small" color="#0000ff" />;
+        // let picker = !this.state.loadingData ?
+        //     <Picker
+        //         style={{ flex: 1, height: 50 }}
+        //         selectedValue={this.state.balanceSelected}
+        //         onValueChange={balanceSelected => this.setState({ balanceSelected })}>
+        //         {this.state.balances.length ?
+        //             this.state.balances.map((blc, i) =>
+        //                 <Picker.Item
+        //                     key={i}
+        //                     label={`Alias:${blc.alias} ${blc.name}:${blc.balance}`}
+        //                     value={blc}
+        //                 />) :
+        //             <Picker.Item key={0} label={'No accounts available'} value={null} />
+        //         }
+        //     </Picker> :
+        //     <ActivityIndicator size="small" color="#0000ff" />;
 
 
         return (
             <ScrollView
                 keyboardShouldPersistTaps="always"
                 keyboardDismissMode="interactive"
-                contentContainerStyle={{ backgroundColor: 'white', borderRadius: 5 }}
+                contentContainerStyle={{ backgroundColor: 'white', borderRadius: 5, justifyContent: 'center' }}
             >
                 <KeyboardAvoidingView>
-                    <SendInputView>
+                    {/* <SendInputView>
                         <InputLabel> To </InputLabel>
                         <TextInput
                             style={{ flex: 1, marginTop: 10 }}
@@ -189,8 +222,16 @@ class SendForm extends Component {
                             underlineColorAndroid={'white'}
                             value={this.state.amount}
                         />
-                    </SendInputView>
-                    <SendButtonView>
+                    </SendInputView> */}
+                    <Text style={{
+                        fontWeight: 'bold', fontSize: 13, textAlign: 'center',
+                        margin: 10,
+                        color: '#2e3666'
+                    }}>Scan the transaction to be submitted</Text>
+                    <QRCodeScanner
+                        onRead={this.onSuccessQRCode.bind(this)}
+                    />
+                    {/* <SendButtonView>
                         <Button
                             ref={ref => (this.sendButton = ref)}
                             foregroundColor={'#276cf2'}
@@ -206,7 +247,7 @@ class SendForm extends Component {
                             style={{ borderWidth: 0 }}
                             onPress={this.sendTransaction}
                         />
-                    </SendButtonView>
+                    </SendButtonView> */}
                 </KeyboardAvoidingView>
             </ScrollView>
         )

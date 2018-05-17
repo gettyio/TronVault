@@ -64,7 +64,7 @@ class HomeScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Tron Mobile</Title>
+							<Title>Transactions</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={params.toggleAddModal}>
@@ -227,6 +227,11 @@ class HomeScreen extends Component {
 		}
 	}
 
+	openTransaction = () =>{
+		this.toggleAddModal();
+		this.props.navigation.navigate('TransactionDetail');
+        this.props.navigation.goBack();
+	}
 	render() {
 		const { appStore, navigation } = this.props
 		const { transactions, isLoadingList } = this.state;
@@ -243,7 +248,7 @@ class HomeScreen extends Component {
 							<Icon name="x-circle" color="white" size={32} />
 						</CloseButton>
 						{/* <TransactionForm /> */}
-						<SendForm />
+						<SendForm openTransaction={this.openTransaction} />
 					</SafeAreaView>
 				</Modal>
 				<StatusBar barStyle="light-content" />

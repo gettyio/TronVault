@@ -1,50 +1,90 @@
-// import HttpClient from "@tronprotocol/wallet-api/src/client/http";
-// import { passwordToAddress } from "@tronprotocol/wallet-api/src/utils/crypto";
+import { signTransaction, decode58Check } from "@tronprotocol/wallet-api/src/utils/crypto";
+const { Block, Transaction, Account } = require("@tronprotocol/wallet-api/src/protocol/core/Tron_pb");
+const google_protobuf_any_pb = require('google-protobuf/google/protobuf/any_pb.js');
 
-// const Client = new HttpClient();
+const hexStr2byteArray = require("@tronprotocol/wallet-api/src/lib/code").hexStr2byteArray;
+const stringToBytes = require("@tronprotocol/wallet-api/src/lib/code").stringToBytes;
+const { base64DecodeFromString, byteArray2hexStr, bytesToString } = require("@tronprotocol/wallet-api/src/utils/bytes");
+const deserializeTransaction = require("@tronprotocol/wallet-api/src/protocol/serializer").deserializeTransaction;
+const { Base64 } = require("./crypto/base64");
 
+const {
+    TransferContract,
+    TransferAssetContract,
+    AccountUpdateContract,
+    VoteWitnessContract,
+    ParticipateAssetIssueContract } = require("@tronprotocol/wallet-api/src/protocol/core/Contract_pb");
 
-// const initialParams = {
-//     key: '',
-//     to: '',
-//     token: '',
-//     amount: 0
-// };
+//const Client = new HttpClient();
+//export const getTransactionDetail = (data) => Client.getTransactionDetails(data);
 
-// const initialOption = {
-//     address: '',
-//     alias: 'Not valid',
-//     balance: '0',
-//     name: 'Not Valid',
-//     pwd: ''
-// };
+function buildTransferContract(message, contractType, typeName) {
+    var anyValue = new google_protobuf_any_pb.Any();
+    anyValue.pack(message.serializeBinary(), "protocol." + typeName);
 
-// export const ROOT_URL = 'https://tronscan.org/';
-// export const RECEIVE_URL = 'https://tronscan.org//#/send?to=';
+    var contract = new Transaction.Contract();
+    contract.setType(contractType);
+    contract.setParameter(anyValue);
 
-// export const Send = async (params = initialParams) => {
-//     const { key, token, to, amount } = params;
-//     try {
-//         const sendStatus = await Client.send(key, token, to, amount * 1000000);
-//         return sendStatus;
-//     }
-//     catch (error) {
-//         console.log("Not sent with error", error);
-//         throw new Error("Something wrong while making the transaction", error);
-//     }
-// }
+    var raw = new Transaction.raw();
+    raw.addContract(contract);
+    raw.setTimestamp(new Date().getTime() * 1000000);
 
-// export const GetBalances = async (address = '') => {
-//     try {
-//         const balances = await Client.getAccountBalances(address);
-//         if (balances && balances.length) {
-//             return balances.map(bl => ({ address, ...bl }));
-//         } else {
-//             throw new Error("Empty wallet or doesn't exist");
-//         }
-//     } catch (error) {
-//         throw new Error("Something wrong while getting the balances", error);
-//     }
-//     // await Client.getAccountBalances(passwordToAddress(password)).catch(err => console.log("Error at getAccountBalances"))
-//     // await Client.getAccountBalances(address).catch(err => console.log("Error at getAccountBalances"))
-// }
+    var transaction = new Transaction();
+    transaction.setRawData(raw);
+
+    return transaction;
+}
+
+export const buildTransferTransaction = (token, from, to, amount) => {
+
+    if (token.toUpperCase() === 'TRX') {
+
+        let transferContract = new TransferContract();
+        transferContract.setToAddress(Uint8Array.from(decode58Check(to)));
+        transferContract.setOwnerAddress(Uint8Array.from(decode58Check(from)));
+        transferContract.setAmount(amount);
+
+        return buildTransferContract(
+            transferContract,
+            Transaction.Contract.ContractType.TRANSFERCONTRACT,
+            "TransferContract"
+        );
+    } else {
+
+        let transferContract = new TransferAssetContract();
+        transferContract.setToAddress(Uint8Array.from(decode58Check(to)));
+        transferContract.setOwnerAddress(Uint8Array.from(decode58Check(from)));
+        transferContract.setAmount(amount);
+        transferContract.setAssetName(token);
+
+        return buildTransferContract(
+            transferContract,
+            Transaction.Contract.ContractType.TRANSFERASSETCONTRACT,
+            "TransferAssetContract"
+        );
+    }
+}
+
+export const getTransactionDetails = async (data) => {
+    let transaction;
+    if (typeof data === 'string') {
+        let bytesDecode = new Base64().decodeToByteArray(data);
+        transaction = Transaction.deserializeBinary(bytesDecode);
+    } else if (data instanceof Transaction) {
+        transaction = data;
+    }
+    const transactionDetail = deserializeTransaction(transaction);
+    return transactionDetail;
+
+}
+
+export const signDataTransaction = async (sk, transactionString) => {
+    
+    let transactionDecoded = Transaction.deserializeBinary(hexStr2byteArray(transactionString));
+    let transactionSigned = signTransaction(hexStr2byteArray(sk), transactionDecoded);
+    let transactionSignedBytes = transactionSigned.serializeBinary();
+    let transactionSignedString = byteArray2hexStr(transactionSignedBytes);
+    
+    return transactionSignedString;
+}
