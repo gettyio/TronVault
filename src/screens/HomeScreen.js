@@ -96,19 +96,33 @@ class HomeScreen extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		this.handleCurrentTx()
-		this.loadTransactions();
+		this.handleCurrentTx();
+		// this.loadTransactions();
+
+	}
+	shouldComponentUpdate(prevProps, prevState) {
+		const { transactions } = prevState;
+		return this.loadTransactions(transactions);
 	}
 
-	loadTransactions = () => {
+	loadTransactions = async (prevTx = []) => {
 		const self = this;
-		db.allDocs({
-			include_docs: true
-		}).then((res) => {
+		try {
+			const res = await db.allDocs({ include_docs: true });
 			const rawTransactions = res.rows.map((item, index) => item.doc);
 			const transactions = sortBy(rawTransactions, 'createdAt').reverse()
-			self.setState({ transactions, isLoadingList: false });
-		})
+			if (transactions.length != prevTx.length) {
+				self.setState({ transactions });
+				return true;
+			}
+			return false;
+		} catch (error) {
+			console.log(error);
+			return false;
+
+		} finally {
+			self.setState({ isLoadingList: false });
+		}
 	}
 
 	handleCurrentTx = () => {
@@ -227,10 +241,10 @@ class HomeScreen extends Component {
 		}
 	}
 
-	openTransaction = () =>{
+	openTransaction = () => {
 		this.toggleAddModal();
 		this.props.navigation.navigate('TransactionDetail');
-        this.props.navigation.goBack();
+		this.props.navigation.goBack();
 	}
 	render() {
 		const { appStore, navigation } = this.props

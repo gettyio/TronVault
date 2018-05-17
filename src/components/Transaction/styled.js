@@ -81,9 +81,15 @@ export const AccountInfoCard = styled.View`
   border-radius: 10px;
 `
 
+export const TypeCard = styled.View`
+  bottom: 0;
+  margin-bottom: 1px;
+  width: auto;
+  align-self: flex-end;
+`
+
 export const AmountCard = styled.View`
   bottom: 0;
-  margin-bottom: 8px;
   width: auto;
   align-self: flex-end;
 `
@@ -113,9 +119,15 @@ export const AccountLabel = styled.Text`
 `
 
 export const AmountLabel = styled.Text`
+  font-size: 17px;
+  font-weight: 700;
+  color: #3e3666;
+`
+
+export const TypeLabel = styled.Text`
   font-size: 24px;
   font-weight: 700;
-  color: #3ed235;
+  color: #3ED235;
 `
 
 
