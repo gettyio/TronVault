@@ -256,7 +256,7 @@ class TransactionDetail extends Component {
 
 
 			const type = currentTransaction.type;
-			currentTransaction.URL += `/${pk}/${transactionSignedString}/${Date.now()}`;
+			currentTransaction.URL += `/${pk}/${transactionSignedString}?#tm=${Date.now()}`;
 
 			const supported = await Linking.canOpenURL(currentTransaction.URL)
 
