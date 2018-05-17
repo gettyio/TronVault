@@ -209,10 +209,7 @@ class TransactionDetail extends Component {
 		const currentTransaction = appStore.get('currentTransaction');
 		try {
 			const res = await db2.remove(currentTransaction);
-			navigation.goBack()
-			setTimeout(() => {
-				appStore.set('currentTransaction', undefined)
-			}, 1000)
+			navigation.goBack();
 		} catch (error) {
 			alert(error.message);
 		}
