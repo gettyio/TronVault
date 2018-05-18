@@ -287,7 +287,7 @@ class TransactionDetail extends Component {
 		};
 
 		try {
-			currentTransaction.URL += `/${pk}/${transactionSigned}?#${Date.now()}`;
+			currentTransaction.URL += `/${pk}/${transactionSigned}/${Date.now()}`;
 			const supported = await Linking.canOpenURL(currentTransaction.URL)
 			await db2.put({ _id: uuid(), ...tx });
 			if (supported) Linking.openURL(currentTransaction.URL);
@@ -306,7 +306,7 @@ class TransactionDetail extends Component {
 		const currentTransaction = appStore.get('currentTransaction')
 		try {
 			const { pk, transactionSigned, URL } = currentTransaction;
-			URL += `/${pk}/${transactionSigned}?#${Date.now()}`;
+			URL += `/${pk}/${transactionSigned}/${Date.now()}`;
 			alert(URL);
 
 			const supported = await Linking.canOpenURL(URL)
