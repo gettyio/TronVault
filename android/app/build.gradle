@@ -105,8 +105,8 @@ android {
         applicationId "com.tronmobile"
         minSdkVersion 17
         targetSdkVersion 23
-        versionCode 34
-        versionName "1.5.3"
+        versionCode 35
+        versionName "1.5.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

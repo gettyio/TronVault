@@ -1,6 +1,6 @@
 {
   "name": "tron-vault",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
