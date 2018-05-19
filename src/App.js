@@ -111,6 +111,7 @@ const DetailStack = TabNavigator(
   }
 )
 
+
 const RootStack = StackNavigator(
   {
     Main: {
