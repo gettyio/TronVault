@@ -32,17 +32,17 @@ import {
 
 
 const SendInputView = styled.View`
-width: 100%;
-justify-content: center;
-padding: 8px;
+	width: 100%;
+	justify-content: center;
+	padding: 8px;
 `
 const InputLabel = styled.Text`
-marginTop: 10px;
-font-weight: 700;
+	margin-top: 10px;
+	font-weight: 700;
 `
 const TextInputWrapper = styled.View`
-align-items: center;
-flex-direction: row;
+	align-items: center;
+	flex-direction: row;
 `
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite)
 PouchDB.plugin(SQLiteAdapter)
@@ -62,12 +62,13 @@ class SendForm extends Component {
         loadingSend: false,
         dataError: false,
         sendError: false,
-        sendStatus: false,
-    }
-
-    componentDidMount() {
-        // this.loadData();
-    }
+				sendStatus: false,
+				isLoading: true
+		}
+		
+		componentDidMount() {
+			setTimeout(()=> this.setState({ isLoading: false }), 500);
+		}
 
     sendTransaction = async () => {
         const { appStore } = this.props;
@@ -139,8 +140,7 @@ class SendForm extends Component {
         this.setState({ balances: newBalances });
     }
 
-
-    onSuccessQRCode(e) {
+    onSuccessQRCode = (e)=> {
         const { appStore } = this.props;
         const { data } = e
         try {
@@ -165,92 +165,35 @@ class SendForm extends Component {
                 { cancelable: false }
             )
         }
-
-        // this.props.navigation.navigate('TransactionDetail');
-        // this.props.navigation.goBack();
-        // this.props.navigation.state.params.callback(JSON.parse(data))
     }
     render() {
-        // let picker = !this.state.loadingData ?
-        //     <Picker
-        //         style={{ flex: 1, height: 50 }}
-        //         selectedValue={this.state.balanceSelected}
-        //         onValueChange={balanceSelected => this.setState({ balanceSelected })}>
-        //         {this.state.balances.length ?
-        //             this.state.balances.map((blc, i) =>
-        //                 <Picker.Item
-        //                     key={i}
-        //                     label={`Alias:${blc.alias} ${blc.name}:${blc.balance}`}
-        //                     value={blc}
-        //                 />) :
-        //             <Picker.Item key={0} label={'No accounts available'} value={null} />
-        //         }
-        //     </Picker> :
-        //     <ActivityIndicator size="small" color="#0000ff" />;
+			const { isLoading } = this.state;
+			if (isLoading) {
+				return (
+					<View style={{ flex: 1, justifyContent: 'center', }}>
+						<ActivityIndicator size="large" color="#0000ff" />
+					</View>
+				)
+			}
 
-
-        return (
-            <ScrollView
-                keyboardShouldPersistTaps="always"
-                keyboardDismissMode="interactive"
-                contentContainerStyle={{ backgroundColor: 'white', borderRadius: 5, justifyContent: 'center' }}
-            >
-                <KeyboardAvoidingView>
-                    {/* <SendInputView>
-                        <InputLabel> To </InputLabel>
-                        <TextInput
-                            style={{ flex: 1, marginTop: 10 }}
-                            autoFocus={false}
-                            autoCorrect={false}
-                            onChangeText={to => this.setState({ to })}
-                            clearButtonMode={'always'}
-                            underlineColorAndroid={'white'}
-                            value={this.state.to}
-                        />
-
-                        <InputLabel> Token </InputLabel>
-                        {picker}
-
-                        <InputLabel> Amount </InputLabel>
-                        <TextInput
-                            style={{ flex: 1, marginTop: 10 }}
-                            autoFocus={false}
-                            keyboardType={'numeric'}
-                            autoCorrect={false}
-                            onChangeText={amount => this.setState({ amount })}
-                            clearButtonMode={'always'}
-                            underlineColorAndroid={'white'}
-                            value={this.state.amount}
-                        />
-                    </SendInputView> */}
-                    <Text style={{
-                        fontWeight: 'bold', fontSize: 13, textAlign: 'center',
-                        margin: 10,
-                        color: '#2e3666'
-                    }}>Scan the transaction to be submitted</Text>
-                    <QRCodeScanner
-                        onRead={this.onSuccessQRCode.bind(this)}
-                    />
-                    {/* <SendButtonView>
-                        <Button
-                            ref={ref => (this.sendButton = ref)}
-                            foregroundColor={'#276cf2'}
-                            foregroundColor={'white'}
-                            backgroundColor={'#276cf2'}
-                            successColor={'#276cf2'}
-                            errorColor={'#ff3b30'}
-                            errorIconColor={'white'}
-                            successIconColor={'white'}
-                            successIconName="check"
-                            label="Send"
-                            disabled={this.state.amount == 0 || !this.state.balances.length || !this.state.to}
-                            style={{ borderWidth: 0 }}
-                            onPress={this.sendTransaction}
-                        />
-                    </SendButtonView> */}
-                </KeyboardAvoidingView>
-            </ScrollView>
-        )
+			return (
+				<View style={{ flex: 1 }}>
+					<QRCodeScanner
+						showMarker
+						fadeIn
+						reactivate
+						customMarker={(
+							<View style={{ height: '100%', width: '100%', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
+								<View style={{ width: '80%', height: '50%', borderWidth: 2, borderColor: 'white' }}>
+								</View>
+								<Text style={{ color: 'white', marginTop: 16 }}>Scan the QRCode to sign the contract.</Text>
+							</View>
+						)}
+						cameraStyle={{ height: '100%' }}
+						onRead={this.onSuccessQRCode}
+					/>
+				</View>
+			)
     }
 }
 

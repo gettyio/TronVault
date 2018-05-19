@@ -12,6 +12,7 @@ import TransactionDetailScreen from './screens/TransactionDetailScreen'
 import AccountDetailScreen from './screens/AccountDetailScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ManageSeedScreen from './screens/ManageSeedScreen';
+import QRCodeReaderScreen from './screens/QRCodeReaderScreen';
 import store from './store'
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation'
 
@@ -110,13 +111,12 @@ const DetailStack = TabNavigator(
   }
 )
 
-
 const RootStack = StackNavigator(
   {
     Main: {
       screen: NavigationStack,
     },
-    AuthModal: {
+    Auth: {
       screen: AuthScreen,
     },
     CreateVault: {
@@ -130,10 +130,13 @@ const RootStack = StackNavigator(
     },
     TransactionDetail: {
       screen: TransactionDetailScreen
-    }
+		},
+		QRCodeReader: {
+			screen: QRCodeReaderScreen
+		}
   },
   {
-    initialRouteName: 'AuthModal',
+    initialRouteName: 'Auth',
     mode: 'modal'
   }
 );

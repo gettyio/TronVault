@@ -49,7 +49,7 @@ class TransactionList extends Component {
 
     if (isLoadingList) {
       return (
-        <View style={{ flex: 1, marginTop: 64 }}>
+        <View style={{ flex: 1, justifyContent: 'center', }}>
           <ActivityIndicator size="large" color="#0000ff" />
         </View>
       )
@@ -65,7 +65,7 @@ class TransactionList extends Component {
 
     if (transactions.length < 1) {
       return (
-        <EmptyScreen style={{ height: '100%' }}>
+        <EmptyScreen style={{ flex: 1 }}>
           <Image
             source={require('../../assets/empty.png')}
             resizeMode="contain"

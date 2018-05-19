@@ -28,7 +28,6 @@ import Modal from 'react-native-modal'
 import SInfo from 'react-native-sensitive-info';
 import Button from 'react-native-micro-animated-button'
 import TransactionForm from '../components/Transaction/TransactionForm'
-import SendForm from '../components/Transaction/SendForm';
 // import TransactionDetail from '../components/TransactionDetail'
 import PasteButton from '../components/UI/PasteButton'
 import TransactionList from '../components/Transaction/TransactionList'
@@ -88,7 +87,6 @@ class HomeScreen extends Component {
 
 	componentWillMount() {
 		this.props.navigation.setParams({ toggleAddModal: this.toggleAddModal });
-
 	}
 
 	componentDidMount() {
@@ -157,7 +155,8 @@ class HomeScreen extends Component {
 
 	toggleAddModal = () => {
 		const { appStore } = this.props
-		appStore.set('isAddModalVisible', !appStore.get('isAddModalVisible'))
+		//appStore.set('isAddModalVisible', !appStore.get('isAddModalVisible'))
+		this.props.navigation.navigate('QRCodeReader');
 	}
 
 	decodeXdr = xdr => {
@@ -241,11 +240,6 @@ class HomeScreen extends Component {
 		}
 	}
 
-	openTransaction = () => {
-		this.toggleAddModal();
-		this.props.navigation.navigate('TransactionDetail');
-		this.props.navigation.goBack();
-	}
 	render() {
 		const { appStore, navigation } = this.props
 		const { transactions, isLoadingList } = this.state;
@@ -256,15 +250,6 @@ class HomeScreen extends Component {
 		return (
 			<Screen>
 				<TransactionList transactions={transactions} isLoadingList={isLoadingList} />
-				<Modal isVisible={isAddModalVisible} >
-					<SafeAreaView style={{ flex: 1 }}>
-						<CloseButton onPress={this.toggleAddModal}>
-							<Icon name="x-circle" color="white" size={32} />
-						</CloseButton>
-						{/* <TransactionForm /> */}
-						<SendForm openTransaction={this.openTransaction} />
-					</SafeAreaView>
-				</Modal>
 				<StatusBar barStyle="light-content" />
 			</Screen>
 		)

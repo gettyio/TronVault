@@ -241,7 +241,7 @@ class SecretsScreen extends Component {
 		const isAddSecretModalVisible = appStore.get('isAddSecretModalVisible')
 
 		return (
-			<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
+			<SafeAreaView>
 				<Screen>
 					<SecretList secrets={secrets} show={this.showAccountDetail} />
 					<Modal isVisible={isAddSecretModalVisible}>
