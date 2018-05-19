@@ -67,8 +67,6 @@ const db2 = new PouchDB('Transactions', { adapter: 'react-native-sqlite' })
 class TransactionDetail extends Component {
 
 	static navigationOptions = ({ navigation }) => {
-		const params = navigation.state.params || {};
-
 		return {
 			header: (
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
@@ -77,7 +75,7 @@ class TransactionDetail extends Component {
 							<Title>Transaction Detail</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.navigate('Home')}>
+							<LoadButton onPress={() => navigation.goBack()}>
 								<Icon name="x-circle" color="white" size={32} />
 							</LoadButton>
 						</LoadButtonWrapper>
@@ -146,64 +144,6 @@ class TransactionDetail extends Component {
 		}
 	}
 
-	// copyToClipboard = () => {
-	// 	const { appStore, navigation } = this.props
-	// 	const tx = appStore.get('currentTransaction')
-	// 	Clipboard.setString(tx.xdr);
-	// 	alert('The signed xdr was copied to the clipboard.');
-	// }
-
-	// handleTabIndexChange = index => {
-	// 	this.setState({
-	// 		tabView: Object.assign({}, this.state.tabView, {
-	// 			index
-	// 		})
-	// 	})
-	// }
-
-	// signTransaction = () => {
-	// 	this.authTransaction();
-	// }
-
-	// authTransaction = () => {
-	// 	const { appStore, navigation } = this.props
-	// 	const seed = appStore.get('seed')
-
-	// 	const { secrets, options } = this.state;
-	// 	if (!secrets || secrets.length === 0) {
-	// 		Alert.alert(
-	// 			`You don't have any secret!`,
-	// 			`Please, add a new secret on the secrets tab.`,
-	// 			[
-	// 				{
-	// 					text: 'Ok',
-	// 					onPress: () => navigation.goBack()
-	// 				}
-	// 			]
-	// 		)
-	// 	} else {
-	// 		this.actionSheet.show();
-	// 	}
-	// }
-
-	// rejectTransaction = () => {
-	// 	const { appStore, navigation } = this.props
-	// 	const currentTransaction = appStore.get('currentTransaction')
-	// 	try {
-	// 		db2.put({
-	// 			_id: currentTransaction._id,
-	// 			...currentTransaction,
-	// 			status: 'REJECTED'
-	// 		});
-	// 		navigation.goBack()
-	// 		setTimeout(() => {
-	// 			appStore.set('currentTransaction', undefined)
-	// 		}, 1000)
-	// 	} catch (error) {
-	// 		alert(error.message)
-	// 	}
-	// }
-
 	deleteTransaction = async () => {
 		const { appStore, navigation } = this.props
 		const currentTransaction = appStore.get('currentTransaction');
@@ -214,22 +154,6 @@ class TransactionDetail extends Component {
 			alert(error.message);
 		}
 	}
-
-	// showConfirmDelete = tx => {
-	// 	Alert.alert(
-	// 		`Are you sure you want delete this?`,
-	// 		`${tx.memo}`,
-	// 		[
-	// 			{ text: 'Cancel', onPress: () => { }, style: 'cancel' },
-	// 			{
-	// 				text: 'Confirm',
-	// 				onPress: () => this.deleteTransaction(tx)
-	// 			}
-	// 		],
-	// 		{ cancelable: true }
-	// 	)
-	// }
-
 
 	submitSignature = index => {
 		const { secrets, secretSelected } = this.state;
@@ -267,7 +191,7 @@ class TransactionDetail extends Component {
 			return;
 		} catch (error) {
 			alert(error.message || error);
-			navigation.navigate('Home');
+			navigation.goBack();
 		} finally {
 			this.signButton.reset();
 		}
@@ -292,7 +216,7 @@ class TransactionDetail extends Component {
 			await db2.put({ _id: uuid(), ...tx });
 			if (supported) Linking.openURL(currentTransaction.URL);
 			this.signButton.success();
-			navigation.navigate('Home');
+			navigation.goBack();
 
 		} catch (error) {
 			alert(error.message)
@@ -313,82 +237,13 @@ class TransactionDetail extends Component {
 			if (supported) Linking.openURL(URL);
 
 			this.signButton.success();
-			navigation.navigate('Home');
+			navigation.goBack();
 		} catch (error) {
 			alert(error.message)
 			this.signButton.reset();
 		}
 
 	}
-
-	// saveCurrentTransaction = data => {
-	// 	const { appStore } = this.props
-	// 	const currentTransaction = appStore.get('currentTransaction')
-	// 	if (data) {
-	// 		if (data.type === 'error') {
-	// 			//console.warn('Error: ', data);
-	// 			this.saveTransaction({
-	// 				xdr: data.xdr,
-	// 				createdAt: new Date().toISOString(),
-	// 				type: 'error',
-	// 				message: data.message,
-	// 				status: 'ERROR'
-	// 			})
-	// 		} else if (data.type === 'sign') {
-	// 			this.saveTransaction({
-	// 				...currentTransaction,
-	// 				...data,
-	// 				status: 'SIGNED',
-	// 				createdAt: new Date().toISOString()
-	// 			})
-	// 		} else {
-	// 			const tx = parseEnvelopeTree(data.tx)
-	// 			this.saveTransaction({
-	// 				...tx,
-	// 				type: data.type,
-	// 				xdr: data.xdr,
-	// 				createdAt: new Date().toISOString(),
-	// 				status: 'CREATED'
-	// 			})
-	// 		}
-	// 	} else {
-	// 		console.warn('Data not found!');
-	// 	}
-	// }
-
-	// saveTransaction = async tx => {
-	// 	const { appStore } = this.props
-	// 	try {
-	// 		db2.put({
-	// 			_id: uuid(),
-	// 			...tx
-	// 		});
-	// 	} catch (error) {
-	// 		alert(error.message)
-	// 	}
-	// 	appStore.set('currentXdr', undefined)
-	// }
-
-
-
-	// showConfirmSignatureAlert = secret => {
-	// 	if (secret && secret.doc) {
-	// 		Alert.alert(
-	// 			`${secret.doc.alias}`,
-	// 			`${secret.doc.pk}`,
-	// 			[
-	// 				{ text: 'Cancel', onPress: () => { }, style: 'cancel' },
-	// 				{
-	// 					text: 'Confirm the transaction',
-	// 					onPress: () => this.confirmSignTransaction(secret.doc)
-	// 				}
-	// 			],
-	// 			{ cancelable: true }
-	// 		)
-	// 	} else {
-	// 		Alert.alert('You don`t have secrets seleceted');
-	// 	}
-	// }
 
 	renderTxDetail = () => {
 		const { transactionDetail, secretSelected, isSigned } = this.state;
@@ -519,7 +374,6 @@ class TransactionDetail extends Component {
 						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
 					/>
 				</Fragment>}
-
 			</ContainerFlex>
 		)
 	}

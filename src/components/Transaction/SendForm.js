@@ -180,7 +180,6 @@ class SendForm extends Component {
 				<View style={{ flex: 1 }}>
 					<QRCodeScanner
 						showMarker
-						fadeIn
 						reactivate
 						customMarker={(
 							<View style={{ height: '100%', width: '100%', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
