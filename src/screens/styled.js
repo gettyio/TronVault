@@ -27,7 +27,7 @@ export const CardFlex = styled.View`
   align-self: center;
 `
 export const Screen = styled.View`
-  display: flex;
+	flex: 1;
 	background-color: white;
 `
 export const Header = styled.View`

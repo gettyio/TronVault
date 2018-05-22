@@ -20,10 +20,26 @@ import {
   CreatedAtLabel,
   StatusLabel,
   AccountInfoCard,
-  AccountLabel
+  AccountLabel,
+  TypeLabel,
+  TypeCard
 } from './styled'
 
 const TransactionRow = ({ item, appStore, navigation }) => {
+
+  const renderTxDetails = () => {
+    const txDetails = item.transactionDetails;
+    const elements = [];
+    for (let detail in txDetails) {
+      if (detail !== 'Type' && detail !== 'Amount') {
+        elements.push(<LabelsRow key={detail}>
+          <AccountLabel>{`${detail} : ${txDetails[detail]}`}</AccountLabel>
+        </LabelsRow>)
+      }
+    }
+    return elements;
+  }
+
   if (item.type === 'error') {
     return (
       <TouchableOpacity
@@ -60,11 +76,11 @@ const TransactionRow = ({ item, appStore, navigation }) => {
   } else if (item.status === 'REJECTED') {
     iconName = 'stop-circle'
     iconColor = 'red'
-  } else if (item.status === 'SIGNED') {
+  } else if (item.status === 'SUBMITTED') {
     iconName = 'check-circle'
     iconColor = '#3ED235'
   }
-
+  const { Amount, Type } = item.txDetails;
   return (
     <TouchableOpacity key={item.id}
       onPress={() => {
@@ -72,15 +88,16 @@ const TransactionRow = ({ item, appStore, navigation }) => {
         navigation.navigate('TransactionDetail')
       }}>
       <TransactionRowWrapper>
-        <CardWrapper pad="8px">
+        <CardWrapper pad="3px">
           <Icon name={iconName} color={iconColor} size={32} />
           <CardContent>
-            <AmountCard>
-              <AmountLabel>{`${item.amount} XLM`}</AmountLabel>
-            </AmountCard>
-            <LabelsRow>
-              <AccountLabel>{`${item.memo}`}</AccountLabel>
-            </LabelsRow>
+            <TypeCard>
+              <TypeLabel>{`${Type}`}</TypeLabel>
+            </TypeCard>
+            {Amount && <AmountCard>
+              <AmountLabel>{`${Amount} TRX`}</AmountLabel>
+            </AmountCard>}
+            {renderTxDetails()}
             <LabelsRow>
               <StatusLabel status={item.status}>{item.status}</StatusLabel>
               <CreatedAtLabel>
@@ -90,7 +107,7 @@ const TransactionRow = ({ item, appStore, navigation }) => {
           </CardContent>
         </CardWrapper>
       </TransactionRowWrapper>
-    </TouchableOpacity>
+    </TouchableOpacity >
   )
 }
 

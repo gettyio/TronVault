@@ -14,7 +14,8 @@ module.exports = ({ platform }, { module, resolve }) => ({
         include: [
           /node_modules\/pouchdb-adapter-asyncstorage/,
           /node_modules\/react-native-vector-icons/,
-          /node_modules\/cipher-base/,
+					/node_modules\/cipher-base/,
+					/node_modules\/@tronprotocol\/wallet-api\/src/,
         ],
         use: [
           {

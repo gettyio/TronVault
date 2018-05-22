@@ -12,17 +12,21 @@ import TransactionDetailScreen from './screens/TransactionDetailScreen'
 import AccountDetailScreen from './screens/AccountDetailScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import ManageSeedScreen from './screens/ManageSeedScreen';
+import QRCodeReaderScreen from './screens/QRCodeReaderScreen';
 import store from './store'
-import { TabNavigator, TabBarBottom, StackNavigator} from 'react-navigation'
+import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation'
 
 const NavigationStack = TabNavigator(
   {
+    Home: {
+      screen: HomeScreen
+    },
     Secrets: {
       screen: SecretsScreen
-		},
-		Settings: {
-			screen: SettingsScreen
-		}
+    },
+    Settings: {
+      screen: SettingsScreen
+    }
   },
   {
     navigationOptions: ({ navigation }) => ({
@@ -37,11 +41,13 @@ const NavigationStack = TabNavigator(
           iconName = `settings`
         } else if (routeName === 'Receive') {
           iconName = `qrcode`
-				}
-				
-				if (iconName === 'qrcode') {
-					return <IconFA name={iconName} size={25} color={tintColor} />
-				}
+        } else if (routeName === 'Home') {
+          iconName = `home`
+        }
+
+        if (iconName === 'qrcode') {
+          return <IconFA name={iconName} size={25} color={tintColor} />
+        }
 
         return <Icon name={iconName} size={25} color={tintColor} />
       },
@@ -78,7 +84,7 @@ const DetailStack = TabNavigator(
     },
     EnvelopeTreeSigned: {
       screen: AboutScreen
-		}
+    }
   },
   {
     navigationOptions: ({ navigation }) => ({
@@ -111,33 +117,39 @@ const RootStack = StackNavigator(
     Main: {
       screen: NavigationStack,
     },
-    AuthModal: {
+    Auth: {
       screen: AuthScreen,
     },
     CreateVault: {
       screen: CreateVaultScreen,
+    },
+    AccountDetail: {
+      screen: AccountDetailScreen
+    },
+    ManageSeed: {
+      screen: ManageSeedScreen
+    },
+    TransactionDetail: {
+      screen: TransactionDetailScreen
 		},
-		AccountDetail: {
-			screen: AccountDetailScreen
-		},
-		ManageSeed: {
-			screen: ManageSeedScreen
+		QRCodeReader: {
+			screen: QRCodeReaderScreen
 		}
   },
   {
-    initialRouteName: 'AuthModal',
+    initialRouteName: 'Auth',
     mode: 'modal'
   }
 );
 
 export default (() => (
   <Provider appStore={store} >
-		<Fragment>
-			<StatusBar
-				backgroundColor="#6a51ae"
-				barStyle="light-content"
-			/>
-			<RootStack />
-		</Fragment>
+    <Fragment>
+      <StatusBar
+        backgroundColor="#6a51ae"
+        barStyle="light-content"
+      />
+      <RootStack />
+    </Fragment>
   </Provider>
 ))

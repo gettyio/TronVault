@@ -119,45 +119,6 @@ class SecretsScreen extends Component {
 		const { sk, alias } = this.state
 	}
 
-	// addSecretToStore = () => {
-	//   const { sk, alias } = this.state
-	//   if (!sk || !alias) {
-	//     this.setState({ hasError: true })
-	//     this.addSecretButton.error()
-	//     this.addSecretButton.reset()
-	//   } else {
-	//     this.addSecretButton.success()      
-	//     this.saveSecret({ sk: sk.trim(), alias: alias.trim() })
-	// 		this.setState({ hasError: false, sk: undefined, alias: undefined })
-	// 		this.toggleAddModal()
-	//   }
-	// }
-
-	// encryptSecret = (_id, sk) => {
-	// 	const pwd = this.props.appStore.get('pwd');
-	// 	var ciphertext = cryptojs.AES.encrypt(sk, `${_id}:${pwd}`);
-	// 	SInfo.setItem(_id, ciphertext.toString(), {});
-	// }
-
-	// saveSecret = ({ sk, alias }) => {
-	// 	const _id = uuid();
-	// 	const keypair = StellarSdk.Keypair.fromSecret(sk);
-	// 	const pk = keypair.publicKey();
-	// 	try {
-	// 		db.put({
-	// 			_id,
-	// 			alias,
-	// 			pk: `${pk.slice(0,8)}...${pk.substr(pk.length - 8)}`,
-	// 			sk: `${sk.slice(0,8)}...${sk.substr(sk.length - 8)}`,
-	// 			createdAt: new Date().toISOString()
-	// 		});
-	// 		this.encryptSecret(_id, sk)
-	// 		this.loadData();
-	// 	} catch (error) {
-	// 		alert(error.message)
-	// 	}
-	// }
-
 	createNewAccount = () => {
 		const { appStore } = this.props
 		const { alias, userPath, hasError } = this.state;
@@ -241,90 +202,88 @@ class SecretsScreen extends Component {
 		const isAddSecretModalVisible = appStore.get('isAddSecretModalVisible')
 
 		return (
-			<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
-				<Screen>
-					<SecretList secrets={secrets} show={this.showAccountDetail} />
-					<Modal isVisible={isAddSecretModalVisible}>
-						<SafeAreaView style={{ flex: 1 }}>
-							<ScrollView
-								keyboardShouldPersistTaps="always"
-								keyboardDismissMode="interactive"
-							>
-								<ContainerFlex>
-									<CloseButton onPress={this.toggleAddModal}>
-										<Icon name="x-circle" color="white" size={32} />
-									</CloseButton>
-									<CardFlex>
-										<TextInput
-											autoFocus={false}
-											autoCorrect={false}
-											placeholder="Type an alias for this account."
-											onChangeText={text => this.setState({ alias: text })}
-											clearButtonMode={'always'}
-											underlineColorAndroid={'white'}
-											value={alias}
+			<Screen>
+				<SecretList secrets={secrets} show={this.showAccountDetail} />
+				<Modal isVisible={isAddSecretModalVisible}>
+					<SafeAreaView style={{ flex: 1 }}>
+						<ScrollView
+							keyboardShouldPersistTaps="always"
+							keyboardDismissMode="interactive"
+						>
+							<ContainerFlex>
+								<CloseButton onPress={this.toggleAddModal}>
+									<Icon name="x-circle" color="white" size={32} />
+								</CloseButton>
+								<CardFlex>
+									<TextInput
+										autoFocus={false}
+										autoCorrect={false}
+										placeholder="Type an alias for this account."
+										onChangeText={text => this.setState({ alias: text })}
+										clearButtonMode={'always'}
+										underlineColorAndroid={'white'}
+										value={alias}
+									/>
+									<TextInput
+										keyboardType={'numeric'}
+										autoCorrect={false}
+										autoFocus={false}
+										onChangeText={text => this.setState({ userPath: text })}
+										clearButtonMode={'always'}
+										underlineColorAndroid={'white'}
+										value={userPath}
+										style={{ fontWeight: '700' }}
+									/>
+									<View>
+										{hasError && <ErrorLabel>Invalid alias or vault number.</ErrorLabel>}
+									</View>
+								</CardFlex>
+								<KeyboardAvoidingView>
+									<CreatePairKeyView>
+										<Button
+											ref={ref => (this.addSecretButton = ref)}
+											foregroundColor={'#276cf2'}
+											onPress={this.createNewAccount}
+											foregroundColor={'white'}
+											backgroundColor={'#276cf2'}
+											successColor={'#276cf2'}
+											errorColor={'#ff3b30'}
+											errorIconColor={'white'}
+											successIconColor={'white'}
+											successIconName="check"
+											label="Create Tron Account"
+											style={{ borderWidth: 0 }}
 										/>
-										<TextInput
-											keyboardType={'numeric'}
-											autoCorrect={false}
-											autoFocus={false}
-											onChangeText={text => this.setState({ userPath: text })}
-											clearButtonMode={'always'}
-											underlineColorAndroid={'white'}
-											value={userPath}
-											style={{ fontWeight: '700' }}
-										/>
-										<View>
-											{hasError && <ErrorLabel>Invalid alias or vault number.</ErrorLabel>}
-										</View>
-									</CardFlex>
-									<KeyboardAvoidingView>
-										<CreatePairKeyView>
-											<Button
-												ref={ref => (this.addSecretButton = ref)}
-												foregroundColor={'#276cf2'}
-												onPress={this.createNewAccount}
-												foregroundColor={'white'}
-												backgroundColor={'#276cf2'}
-												successColor={'#276cf2'}
-												errorColor={'#ff3b30'}
-												errorIconColor={'white'}
-												successIconColor={'white'}
-												successIconName="check"
-												label="Create Tron Account"
-												style={{ borderWidth: 0 }}
-											/>
-										</CreatePairKeyView>
-										<View>
-											<SecretLabel>
-												The number above is your auto generated vault number. Please, take note on paper and keep it safe, you will need it to recover this secret from another device. If have you restored your seed string, please clear this value and type the vault number you want to restore.
+									</CreatePairKeyView>
+									<View>
+										<SecretLabel>
+											The number above is your auto generated vault number. Please, take note on paper and keep it safe, you will need it to recover this secret from another device. If have you restored your seed string, please clear this value and type the vault number you want to restore.
+										</SecretLabel>
+										<SecretLabel weight={'700'}>Create Tron Account </SecretLabel>
+										<SecretLabel>
+											To get started on using the Tron Mobile, you must first create an account, then, you must fund the account before start.
+										</SecretLabel>
+										<SecretLabel>
+											When you create an account with Tron Mobile it will generate a new keypair. The keypair consists of two parts:
+										</SecretLabel>
+										<SecretLabel>
+											<SecretLabel weight={'700'}>Public key:</SecretLabel> The public key is used to identify the account. It is also known as an account. This public key is used for receiving funds.
+										</SecretLabel>
+										<SecretLabel>
+											<SecretLabel weight={'700'}>Secret key:</SecretLabel>
+											The secret key is used to access your account and make transactions. Keep this code safe and secure. Anyone with the code will have full access to the account and funds. If you lose the key, you will no longer be able to access the funds and there is no recovery mechanism.
 											</SecretLabel>
-											<SecretLabel weight={'700'}>Create Tron Account </SecretLabel>
-											<SecretLabel>
-												To get started on using the Tron Mobile, you must first create an account, then, you must fund the account before start.
-											</SecretLabel>
-											<SecretLabel>
-												When you create an account with Tron Mobile it will generate a new keypair. The keypair consists of two parts:
-											</SecretLabel>
-											<SecretLabel>
-												<SecretLabel weight={'700'}>Public key:</SecretLabel> The public key is used to identify the account. It is also known as an account. This public key is used for receiving funds.
-											</SecretLabel>
-											<SecretLabel>
-												<SecretLabel weight={'700'}>Secret key:</SecretLabel>
-												The secret key is used to access your account and make transactions. Keep this code safe and secure. Anyone with the code will have full access to the account and funds. If you lose the key, you will no longer be able to access the funds and there is no recovery mechanism.
-												</SecretLabel>
-											<SecretLabel weight={'700'}>Account generation security notes</SecretLabel>
-											<SecretLabel>
-												The key is generated using a random 32 length string. However, using a secure random number generation does not protect you from a compromised computer. Take great care to make sure your computer is secure and do not run this on a computer you do not trust.
-											</SecretLabel>
-										</View>
-									</KeyboardAvoidingView>
-								</ContainerFlex>
-							</ScrollView>
+										<SecretLabel weight={'700'}>Account generation security notes</SecretLabel>
+										<SecretLabel>
+											The key is generated using a random 32 length string. However, using a secure random number generation does not protect you from a compromised computer. Take great care to make sure your computer is secure and do not run this on a computer you do not trust.
+										</SecretLabel>
+									</View>
+								</KeyboardAvoidingView>
+							</ContainerFlex>
+						</ScrollView>
 						</SafeAreaView>
-					</Modal>
-				</Screen>
-			</SafeAreaView>
+				</Modal>
+			</Screen>
 		)
 	}
 }

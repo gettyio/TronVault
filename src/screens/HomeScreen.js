@@ -28,7 +28,6 @@ import Modal from 'react-native-modal'
 import SInfo from 'react-native-sensitive-info';
 import Button from 'react-native-micro-animated-button'
 import TransactionForm from '../components/Transaction/TransactionForm'
-import SendForm from '../components/Transaction/SendForm';
 // import TransactionDetail from '../components/TransactionDetail'
 import PasteButton from '../components/UI/PasteButton'
 import TransactionList from '../components/Transaction/TransactionList'
@@ -64,7 +63,7 @@ class HomeScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Tron Mobile</Title>
+							<Title>Contracts</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={params.toggleAddModal}>
@@ -88,7 +87,6 @@ class HomeScreen extends Component {
 
 	componentWillMount() {
 		this.props.navigation.setParams({ toggleAddModal: this.toggleAddModal });
-
 	}
 
 	componentDidMount() {
@@ -96,19 +94,33 @@ class HomeScreen extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		this.handleCurrentTx()
-		this.loadTransactions();
+		this.handleCurrentTx();
+		// this.loadTransactions();
+
+	}
+	shouldComponentUpdate(prevProps, prevState) {
+		const { transactions } = prevState;
+		return this.loadTransactions(transactions);
 	}
 
-	loadTransactions = () => {
+	loadTransactions = async (prevTx = []) => {
 		const self = this;
-		db.allDocs({
-			include_docs: true
-		}).then((res) => {
+		try {
+			const res = await db.allDocs({ include_docs: true });
 			const rawTransactions = res.rows.map((item, index) => item.doc);
 			const transactions = sortBy(rawTransactions, 'createdAt').reverse()
-			self.setState({ transactions, isLoadingList: false });
-		})
+			if (transactions.length != prevTx.length) {
+				self.setState({ transactions });
+				return true;
+			}
+			return false;
+		} catch (error) {
+			console.log(error);
+			return false;
+
+		} finally {
+			self.setState({ isLoadingList: false });
+		}
 	}
 
 	handleCurrentTx = () => {
@@ -143,7 +155,8 @@ class HomeScreen extends Component {
 
 	toggleAddModal = () => {
 		const { appStore } = this.props
-		appStore.set('isAddModalVisible', !appStore.get('isAddModalVisible'))
+		//appStore.set('isAddModalVisible', !appStore.get('isAddModalVisible'))
+		this.props.navigation.navigate('QRCodeReader');
 	}
 
 	decodeXdr = xdr => {
@@ -237,15 +250,6 @@ class HomeScreen extends Component {
 		return (
 			<Screen>
 				<TransactionList transactions={transactions} isLoadingList={isLoadingList} />
-				<Modal isVisible={isAddModalVisible} >
-					<SafeAreaView style={{ flex: 1 }}>
-						<CloseButton onPress={this.toggleAddModal}>
-							<Icon name="x-circle" color="white" size={32} />
-						</CloseButton>
-						{/* <TransactionForm /> */}
-						<SendForm />
-					</SafeAreaView>
-				</Modal>
 				<StatusBar barStyle="light-content" />
 			</Screen>
 		)
