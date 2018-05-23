@@ -167,7 +167,7 @@ class SendForm extends Component {
                     <View style={{  width: '100%', height: '100%', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute' }}>
                         <View style={{ width: '80%', height: '50%', borderWidth: 2, borderColor: 'white' }}>
                         </View>
-                        <Text style={{ color: 'white', marginTop: 16 }}>Scan the QRCode to sign the contract.</Text>
+                        <Text style={{ color: 'white', marginTop: 16 }}>Scan the QRCode to add the contract.</Text>
                     </View>                
 					<QRCodeScanner
 						showMarker
@@ -177,7 +177,7 @@ class SendForm extends Component {
 							<View style={{ height: '100%', width: '100%', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
 								<View style={{ width: '80%', height: '50%', borderWidth: 2, borderColor: 'white' }}>
 								</View>
-								<Text style={{ color: 'white', marginTop: 16 }}>Scan the QRCode to sign the contract.</Text>
+								<Text style={{ color: 'white', marginTop: 16 }}>Scan the QRCode to add the contract.</Text>
 							</View>
 						)}
 						cameraStyle={{ height: '100%' }}
