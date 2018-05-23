@@ -12,7 +12,7 @@ import {
 	LoadButtonWrapper, 
 	LoadButton
 } from './styled';
-import { ListItem } from 'react-native-elements'
+import { List, ListItem } from 'react-native-elements'
 
 @inject('appStore') @observer
 class SettingsScreen extends Component {
@@ -38,33 +38,93 @@ class SettingsScreen extends Component {
 		};
 	};
 
-	state = {
+	deleteAllData = () => {
+		Alert.alert(
+			`Are you sure?`,
+			`This action will destroy everything. Are you sure?`,
+			[
+				{
+					text: 'Delete',
+					onPress: () => {},
+					style: 'cancel'
+				},
+				{ text: 'Close', onPress: () => {} } // Do not button
+			],
+			{ cancelable: false }
+		)
+	}
 
+	deleteAllContracts = () => {
+		Alert.alert(
+			`Are you sure?`,
+			`This action will destroy all contracts. Are you sure?`,
+			[
+				{
+					text: 'Delete',
+					onPress: () => {},
+					style: 'cancel'
+				},
+				{ text: 'Close', onPress: () => {} } // Do not button
+			],
+			{ cancelable: false }
+		)
 	}
 
 	render() {
 		const { appStore, navigation } = this.props
-		const { } = this.state
-		const list = [
+		const defaultList = [
 			{
 				name: 'Manage Seed',
 				icon: 'lock',
-				screen: 'ManageSeed'
+				onPress: ()=> {
+					navigation.navigate('ManageSeed')
+				}
+			}
+		];
+		const criticalList = [
+
+			{
+				name: 'Delete all contracts',
+				icon: 'close',
+				onPress: ()=> {
+					this.deleteAllContracts();
+				}
+			},
+			{
+				name: 'Reset all data',
+				icon: 'close',
+				onPress: ()=> {
+					this.deleteAllData();
+				}
 			}
 		];
 		
 		return (
 			<View>
-				{
-					list.map((item, index) => (
-						<ListItem
-							key={index}
-							leftIcon={{ name: item.icon }}
-							title={item.name}
-							onPress={()=> navigation.navigate(item.screen) }
-						/>
-					))
-				}
+				<List style={{ backgroundColor: 'white' }}>
+					{
+						defaultList.map((item, index) => (
+							<ListItem
+								key={index}
+								leftIcon={{ name: item.icon }}
+								title={item.name}
+								onPress={()=> item.onPress() }
+							/>
+						))
+					}
+				</List>
+				<List style={{ backgroundColor: 'white' }}>
+					{
+						criticalList.map((item, index) => (
+							<ListItem
+								key={index}
+								leftIcon={{ name: item.icon }}
+								title={item.name}
+								onPress={()=> item.onPress() }
+							/>
+						))
+					}
+				</List>				
 			</View>
 			
 		)
