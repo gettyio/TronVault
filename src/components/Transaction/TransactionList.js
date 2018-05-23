@@ -72,7 +72,7 @@ class TransactionList extends Component {
             style={{ width: 170 }}
           />
           <Text style={{ fontWeight: '700', color: '#344B67' }}>
-            No Transactions Found!
+            No smart contracts found!
           </Text>
         </EmptyScreen>
       )

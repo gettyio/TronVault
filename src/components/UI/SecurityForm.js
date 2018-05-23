@@ -17,7 +17,7 @@ import {
 
 class SecurityForm extends Component {
   state = {
-    password: undefined,
+    password: '12345678',
     errorMessage: undefined
 	}
 

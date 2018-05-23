@@ -63,7 +63,7 @@ class HomeScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Contracts</Title>
+							<Title>My Contracts</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={params.toggleAddModal}>

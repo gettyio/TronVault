@@ -51,7 +51,7 @@ class SecretsScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Tron Accounts</Title>
+							<Title>Addresses</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={params.toggleAddModal}>
@@ -251,7 +251,7 @@ class SecretsScreen extends Component {
 											errorIconColor={'white'}
 											successIconColor={'white'}
 											successIconName="check"
-											label="Create Tron Account"
+											label="Create new address"
 											style={{ borderWidth: 0 }}
 										/>
 									</CreatePairKeyView>
@@ -259,23 +259,23 @@ class SecretsScreen extends Component {
 										<SecretLabel>
 											The number above is your auto generated vault number. Please, take note on paper and keep it safe, you will need it to recover this secret from another device. If have you restored your seed string, please clear this value and type the vault number you want to restore.
 										</SecretLabel>
-										<SecretLabel weight={'700'}>Create Tron Account </SecretLabel>
+										<SecretLabel weight={'700'}>Create new address </SecretLabel>
 										<SecretLabel>
-											To get started on using the Tron Mobile, you must first create an account, then, you must fund the account before start.
+											To get started on using the TronVault, you must first create an address, then, you must fund the address.
 										</SecretLabel>
 										<SecretLabel>
-											When you create an account with Tron Mobile it will generate a new keypair. The keypair consists of two parts:
+											When you create an account with TronVault it will generate a new keypair. The keypair consists of two parts:
 										</SecretLabel>
 										<SecretLabel>
-											<SecretLabel weight={'700'}>Public key:</SecretLabel> The public key is used to identify the account. It is also known as an account. This public key is used for receiving funds.
+											<SecretLabel weight={'700'}>Public key:</SecretLabel> The public key is used to identify the address. It is also known as an account or address.
 										</SecretLabel>
 										<SecretLabel>
 											<SecretLabel weight={'700'}>Secret key:</SecretLabel>
-											The secret key is used to access your account and make transactions. Keep this code safe and secure. Anyone with the code will have full access to the account and funds. If you lose the key, you will no longer be able to access the funds and there is no recovery mechanism.
+											The secret key is used to access your address and sign smart contracts. Keep this code safe and secure. Anyone with the code will have full access to the adress assets. If you lose the key, you will no longer be able to access the assets and there is no recovery mechanism.
 											</SecretLabel>
-										<SecretLabel weight={'700'}>Account generation security notes</SecretLabel>
+										<SecretLabel weight={'700'}>Security notes</SecretLabel>
 										<SecretLabel>
-											The key is generated using a random 32 length string. However, using a secure random number generation does not protect you from a compromised computer. Take great care to make sure your computer is secure and do not run this on a computer you do not trust.
+											Turn your mobile phone network off before sign and transmit contracts.
 										</SecretLabel>
 									</View>
 								</KeyboardAvoidingView>

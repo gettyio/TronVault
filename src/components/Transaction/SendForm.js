@@ -62,14 +62,9 @@ class SendForm extends Component {
         loadingSend: false,
         dataError: false,
         sendError: false,
-				sendStatus: false,
-				isLoading: true
-		}
+		sendStatus: false
+	}
 		
-		componentDidMount() {
-			setTimeout(()=> this.setState({ isLoading: false }), 500);
-		}
-
     sendTransaction = async () => {
         const { appStore } = this.props;
         const { to, amount, balanceSelected } = this.state;
@@ -167,20 +162,17 @@ class SendForm extends Component {
         }
     }
     render() {
-			const { isLoading } = this.state;
-			if (isLoading) {
-				return (
-					<View style={{ flex: 1, justifyContent: 'center', }}>
-						<ActivityIndicator size="large" color="#0000ff" />
-					</View>
-				)
-			}
-
 			return (
-				<View style={{ flex: 1 }}>
+				<View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', }}>
+                    <View style={{  width: '100%', height: '100%', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', position: 'absolute' }}>
+                        <View style={{ width: '80%', height: '50%', borderWidth: 2, borderColor: 'white' }}>
+                        </View>
+                        <Text style={{ color: 'white', marginTop: 16 }}>Scan the QRCode to sign the contract.</Text>
+                    </View>                
 					<QRCodeScanner
 						showMarker
-						reactivate
+                        reactivate
+                        fadeIn
 						customMarker={(
 							<View style={{ height: '100%', width: '100%', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' }}>
 								<View style={{ width: '80%', height: '50%', borderWidth: 2, borderColor: 'white' }}>
@@ -191,6 +183,7 @@ class SendForm extends Component {
 						cameraStyle={{ height: '100%' }}
 						onRead={this.onSuccessQRCode}
 					/>
+
 				</View>
 			)
     }

@@ -24,7 +24,7 @@ class QRCodeReaderScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>QRCode Reader</Title>
+							<Title>Add Contract</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={() => navigation.goBack()}>
