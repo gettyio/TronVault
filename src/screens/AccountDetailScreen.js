@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {  View, Text, SafeAreaView, Dimensions, ActivityIndicator, Clipboard, Modal } from 'react-native';
+import {  View, Text, SafeAreaView, Dimensions, ActivityIndicator, Clipboard, Modal, TouchableOpacity } from 'react-native';
 import QRCode from 'react-native-qrcode';
 import Icon from 'react-native-vector-icons/Feather'
 import Button from 'react-native-micro-animated-button'
@@ -27,7 +27,7 @@ class AccountDetailScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Account Detail</Title>
+							<Title>{navigation.getParam('alias', 'Address Detail')}</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={()=> navigation.goBack()}>
@@ -88,11 +88,19 @@ class AccountDetailScreen extends Component {
 		this.setState({ isSecurityRequired: true });
 	}
 
+	deleteCurrentSecret = () => {
+		const { appStore, navigation } = this.props;
+		const deleteSecret = navigation.getParam('delete');
+		const account = appStore.get('currentAccount');
+		deleteSecret(account, ()=> navigation.goBack(), this.deleteSecretBtn.reset);
+	}
+
 	render() {
-		const { appStore } = this.props;
+		const { appStore, navigation } = this.props;
 		const { secret, isSecurityRequired, isAuthenticated } = this.state;
 		const account = appStore.get('currentAccount');
 		const securityFormError = appStore.get('securityFormError');
+		
 		if (!account) {
 			return (
 				<View  style={{ flex: 1 }}>
@@ -104,7 +112,7 @@ class AccountDetailScreen extends Component {
 		}
 
 		return (
-			<View style={{ flex: 1 }}>
+			<View style={{ flex: 1, backgroundColor: '#fff' }}>
 				<View style={{ alignSelf: 'center', marginTop: 60 }}>
 					<QRCode
 						value={account.pk}
@@ -116,7 +124,7 @@ class AccountDetailScreen extends Component {
 					<Button
 						ref={ref => (this.copyAccountBtn = ref)}
 						foregroundColor={'white'}
-						backgroundColor={'#454545'}
+						backgroundColor={'#4cd964'}
 						successColor={'#4cd964'}
 						errorColor={'#ff3b30'}
 						errorIconColor={'white'}
@@ -143,8 +151,22 @@ class AccountDetailScreen extends Component {
 						maxWidth={200}
 						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
 					/>
-
+				<Button
+						ref={ref => (this.deleteSecretBtn = ref)}
+						foregroundColor={'white'}
+						backgroundColor={'#454545'}
+						successColor={'#4cd964'}
+						errorColor={'#ff3b30'}
+						errorIconColor={'white'}
+						successIconColor={'white'}
+						onPress={this.deleteCurrentSecret}
+						successIconName="check"
+						label="Delete Address"
+						maxWidth={200}
+						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
+					/>
 				</View>
+				
 				{ isSecurityRequired &&
 					<Modal isVisible={isSecurityRequired}  onRequestClose={()=>{}}>
 					<SafeAreaView style={{ flex: 1 }}>

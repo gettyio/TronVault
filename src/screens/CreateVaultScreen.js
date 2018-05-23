@@ -59,7 +59,9 @@ class CreateVaultScreen extends Component {
 	}
 
 	componentDidMount() {
-		const mnemonic = bip39.generateMnemonic(512, (n) => randomize('0', n));
+		// Generate 12 words mnemonic: bip39.generateMnemonic(128);
+		// Generate 24 words mnemonic:  bip39.generateMnemonic(512, (n) => randomize('0', n));
+		const mnemonic =  bip39.generateMnemonic(256, (n) => randomize('0', n));
 		//console.log(mnemonic)
 		this.setState({ mnemonic })
 	}
@@ -102,7 +104,7 @@ class CreateVaultScreen extends Component {
 			}
 
 			if (tab === 'restore') {
-				if (seedValue.trim().split(/\s+/g).length === 24) {
+				if (seedValue.trim().split(/\s+/g).length === 12) {
 					this.setState({ successMessage: 'The seed combination is valid. We are restoring your master key...' })
 					this.createSeed();
 				} else {
@@ -204,7 +206,7 @@ class CreateVaultScreen extends Component {
 		return (
 			<View style={{ padding: 16, height: '100%' }}>
 				<View>
-					<VaultWordsText>Please, write down these 24 words on a paper. These 24 words are the only way to restore your Tron Mobile private keys if you loose or change your device. Make sure to keep it safe!</VaultWordsText>
+					<VaultWordsText>Please, write down these 12 words on a paper. These 12 words are the only way to restore your TronVault private keys if you loose or change your device. Make sure to keep it safe!</VaultWordsText>
 					{this.renderWords()}
 				</View>
 				<View style={{ alignItems: 'center' }}>

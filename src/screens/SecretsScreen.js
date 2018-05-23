@@ -155,10 +155,11 @@ class SecretsScreen extends Component {
 		}
 	}
 
-	deleteSecret = async doc => {
+	deleteSecret = async (doc, goBack) => {
 		try {
 			const res = await db.remove(doc);
 			this.loadData();
+			goBack();
 		} catch (error) {
 			alert(error.message);
 		}
@@ -169,17 +170,17 @@ class SecretsScreen extends Component {
 		alert('The public key was copied to the clipboard');
 	}
 
-	showSecretAlert = item => {
+	showDeleteSecretAlert = (item, goBack, resetBtn) => {
 		Alert.alert(
 			`${item.alias}`,
 			`${item.pk}`,
 			[
 				{
 					text: 'Delete',
-					onPress: () => this.deleteSecret(item),
+					onPress: () => this.deleteSecret(item, goBack),
 					style: 'cancel'
 				},
-				{ text: 'Close', onPress: () => this.copyToClipboard(item.pk) } // Do not button
+				{ text: 'Close', onPress: () => resetBtn() } // Do not button
 			],
 			{ cancelable: false }
 		)
@@ -188,7 +189,7 @@ class SecretsScreen extends Component {
 	showAccountDetail = item => {
 		const { appStore, navigation } = this.props
 		appStore.set('currentAccount', item)
-		navigation.navigate('AccountDetail')
+		navigation.navigate('AccountDetail', { alias: item.alias, delete: this.showDeleteSecretAlert })
 	}
 
 	pasteHandler = async () => {

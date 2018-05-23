@@ -75,7 +75,6 @@ class AuthScreen extends Component {
 						const seed = bytes.toString(crypto.enc.Utf8)
 						if (seed) {
 							appStore.set('seed', seed);
-							//console.log('seed',seed)
 							navigation.navigate('Secrets');
 						} else {
 							navigation.navigate('CreateVault');
