@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { StatusBar } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { Provider } from 'mobx-react'
 import Icon from 'react-native-vector-icons/Feather'
 import IconFA from 'react-native-vector-icons/FontAwesome'
@@ -15,6 +15,8 @@ import ManageSeedScreen from './screens/ManageSeedScreen';
 import QRCodeReaderScreen from './screens/QRCodeReaderScreen';
 import store from './store'
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation'
+
+const prefix = Platform.OS == 'android' ? 'tronvault://tronvault/' : 'tronvault://';
 
 const NavigationStack = TabNavigator(
   {
@@ -74,44 +76,6 @@ const NavigationStack = TabNavigator(
   }
 )
 
-const DetailStack = TabNavigator(
-  {
-    EnvelopeCard: {
-      screen: HomeScreen
-    },
-    EnvelopeTreeRaw: {
-      screen: SecretsScreen
-    },
-    EnvelopeTreeSigned: {
-      screen: AboutScreen
-    }
-  },
-  {
-    navigationOptions: ({ navigation }) => ({
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      }
-    }),
-    tabBarPosition: 'bottom',
-    tabBarComponent: TabBarBottom,
-    animationEnabled: true,
-    lazy: false,
-    tabBarOptions: {
-      activeTintColor: '#2e3666',
-      inactiveTintColor: 'gray',
-      showLabel: false,
-      style: {
-        height: 45,
-        backgroundColor: 'white'
-      }
-    },
-    animationEnabled: true,
-    swipeEnabled: false
-  }
-)
-
-
 const RootStack = StackNavigator(
   {
     Main: {
@@ -119,6 +83,7 @@ const RootStack = StackNavigator(
     },
     Auth: {
       screen: AuthScreen,
+      path: 'auth/:tx',
     },
     CreateVault: {
       screen: CreateVaultScreen,
@@ -131,17 +96,16 @@ const RootStack = StackNavigator(
     },
     TransactionDetail: {
       screen: TransactionDetailScreen
-		},
-		QRCodeReader: {
-			screen: QRCodeReaderScreen
-		}
+    },
+    QRCodeReader: {
+      screen: QRCodeReaderScreen
+    }
   },
   {
     initialRouteName: 'Auth',
     mode: 'modal'
   }
 );
-
 export default (() => (
   <Provider appStore={store} >
     <Fragment>
@@ -149,7 +113,7 @@ export default (() => (
         backgroundColor="#6a51ae"
         barStyle="light-content"
       />
-      <RootStack />
+      <RootStack uriPrefix={prefix} />
     </Fragment>
   </Provider>
 ))

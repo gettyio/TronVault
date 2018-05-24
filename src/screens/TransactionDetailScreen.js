@@ -17,6 +17,7 @@ import base64 from 'base-64'
 import base64js from 'base64-js'
 import crypto from 'crypto-js'
 import sha256 from 'crypto-js/sha256';
+import qs from 'qs';
 import { get, sortBy } from 'lodash'
 import { generateTronKeypair } from './../utils/bipUtil';
 import { signDataTransaction } from "../utils/transactionUtil";
@@ -75,7 +76,7 @@ class TransactionDetail extends Component {
 							<Title>Contract Detail</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.goBack()}>
+							<LoadButton onPress={() => navigation.navigate('Home')}>
 								<Icon name="x-circle" color="white" size={32} />
 							</LoadButton>
 						</LoadButtonWrapper>
@@ -166,10 +167,8 @@ class TransactionDetail extends Component {
 		const { appStore } = this.props
 		const { isSigned, secretSelected } = this.state;
 		const currentTransaction = appStore.get('currentTransaction');
-		const { status } = currentTransaction;
 
 		if (isSigned) this.submitTransaction();
-		else if (status === 'SUBMITTED') this.retrySubmit();
 		else this.confirmSignTransaction(secretSelected.doc);
 	}
 
@@ -177,6 +176,7 @@ class TransactionDetail extends Component {
 	confirmSignTransaction = async secret => {
 		const { appStore, navigation } = this.props
 		const currentTransaction = appStore.get('currentTransaction');
+
 		try {
 			const seed = appStore.get('seed');
 
@@ -202,27 +202,33 @@ class TransactionDetail extends Component {
 		const { pk, transactionSigned } = this.state;
 		const currentTransaction = appStore.get('currentTransaction')
 
-		const tx = {
-			...currentTransaction,
-			pk,
-			transactionSigned,
-			status: 'SUBMITTED',
-			createdAt: new Date().toISOString()
-		};
-
 		try {
-			currentTransaction.URL += `/${pk}/${transactionSigned}/${Date.now()}`;
+			if (currentTransaction.from === 'mobile') {
+				currentTransaction.URL += `/${transactionSigned}`;
+			} else {
+				currentTransaction.URL += `/${pk}/${transactionSigned}/${Date.now()}`;
+			}
 			const supported = await Linking.canOpenURL(currentTransaction.URL)
-			await db2.put({ _id: uuid(), ...tx });
-			if (supported) Linking.openURL(currentTransaction.URL);
-			this.signButton.success();
-			navigation.goBack();
+			if (supported) {
+				Linking.openURL(currentTransaction.URL);
+				const tx = {
+					...currentTransaction,
+					pk,
+					transactionSigned,
+					status: 'SUBMITTED',
+					createdAt: new Date().toISOString()
+				};
+				await db2.put({ _id: uuid(), ...tx });
+				this.signButton.success();
+			}
+			navigation.navigate('Home');
 
 		} catch (error) {
 			alert(error.message)
 			this.signButton.reset();
+			navigation.navigate('Home');
 		}
-		return;
+
 	}
 
 	retrySubmit = async () => {
@@ -230,7 +236,7 @@ class TransactionDetail extends Component {
 		const currentTransaction = appStore.get('currentTransaction')
 		try {
 			const { pk, transactionSigned, URL } = currentTransaction;
-			URL += `/${pk}/${transactionSigned}/${Date.now()}`;
+			URL += `/ ${pk} / ${transactionSigned} / ${Date.now()}`;
 			alert(URL);
 
 			const supported = await Linking.canOpenURL(URL)

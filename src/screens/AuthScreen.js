@@ -36,20 +36,17 @@ class AuthScreen extends Component {
 	};
 
 	state = {
-		firstSecret: undefined
+		firstSecret: undefined,
 	}
 
 	componentDidMount() {
 		SplashScreen.hide();
-		this.enableDeepLinks();
+		// this.enableDeepLinks();
 		this.loadData();
 		this.testCreateVote();
 		//this.deleteSeed();
 	}
 
-	componentWillUnmount() {
-		Linking.removeEventListener('url', this.handleAppLinkURL)
-	}
 
 	testCreateVote = () => {
 		// createVoteTransaction();
@@ -75,8 +72,14 @@ class AuthScreen extends Component {
 						const seed = bytes.toString(crypto.enc.Utf8)
 						if (seed) {
 							appStore.set('seed', seed);
-							//console.log('seed',seed)
-							navigation.navigate('Secrets');
+
+							if (navigation.state.params && navigation.state.params.tx) {
+								//that means is receiving a deeplink from tron hot
+								appStore.set('currentTransaction', qs.parse(navigation.state.params.tx));
+								navigation.navigate('TransactionDetail');
+							} else {
+								navigation.navigate('Secrets');
+							}
 						} else {
 							navigation.navigate('CreateVault');
 						}
@@ -88,6 +91,13 @@ class AuthScreen extends Component {
 				alert(error.message);
 				//alert('Error to load your seed, please uninstall this app and install the last version to have a better experience. You will need to use your seed to restore your keys.');
 			}
+		} else {
+			//that means is receiving a deeplink from tron hot
+			if (navigation.state.params && navigation.state.params.tx) {
+				appStore.set('currentTransaction', qs.parse(navigation.state.params.tx));
+				navigation.navigate('TransactionDetail');
+			}
+
 		}
 	}
 
@@ -113,17 +123,6 @@ class AuthScreen extends Component {
 			})
 		} catch (error) {
 			appStore.set('securityFormError', 'Invalid password!')
-		}
-	}
-
-	handleAppLinkURL = event => {
-		const { appStore } = this.props
-		const url = event instanceof String ? event : event.url
-		if (url) {
-			const tx = qs.parse(url.replace('stellar-signer://stellar-signer?', ''))
-			appStore.set('currentXdr', tx.xdr)
-		} else {
-			alert('Invalid Transaction! Please contact the support.')
 		}
 	}
 
