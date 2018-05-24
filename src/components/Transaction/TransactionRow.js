@@ -70,13 +70,7 @@ const TransactionRow = ({ item, appStore, navigation }) => {
 
   let iconName
   let iconColor
-  if (item.status === 'CREATED') {
-    iconName = 'alert-circle'
-    iconColor = '#2e3666'
-  } else if (item.status === 'REJECTED') {
-    iconName = 'stop-circle'
-    iconColor = 'red'
-  } else if (item.status === 'SUBMITTED') {
+  if (item.status === 'SIGNED') {
     iconName = 'check-circle'
     iconColor = '#3ED235'
   }

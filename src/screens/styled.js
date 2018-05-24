@@ -176,3 +176,25 @@ export const MessageLabel = styled.Text`
 font-weight: 700;
 color: #344B67;
 `
+const DetailBox = styled.View`
+width: 90%;
+height: auto;
+flex-direction: column;
+justify-content: flex-start;
+background-color: white;
+`
+
+const DetailRow = styled.View`
+flex-direction: row;
+justify-content: space-between;
+`
+const DetailLabel = styled.Text`
+font-size: 15px;
+margin: 6px;
+font-weight: bold;
+color: #2e3666;
+`
+const DetailText = styled.Text`
+font-size: 15px;
+margin: 6px;
+`
