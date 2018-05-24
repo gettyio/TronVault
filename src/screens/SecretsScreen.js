@@ -220,7 +220,7 @@ class SecretsScreen extends Component {
 									<TextInput
 										autoFocus={false}
 										autoCorrect={false}
-										placeholder="Type an alias for this account."
+										placeholder="Type an alias for this address."
 										onChangeText={text => this.setState({ alias: text })}
 										clearButtonMode={'always'}
 										underlineColorAndroid={'white'}
@@ -230,7 +230,7 @@ class SecretsScreen extends Component {
 										keyboardType={'numeric'}
 										autoCorrect={false}
 										autoFocus={false}
-										placeholder="Type a vault number password."
+										placeholder="Type a numeric password for your address."
 										onChangeText={text => this.setState({ userPath: text })}
 										clearButtonMode={'always'}
 										underlineColorAndroid={'white'}

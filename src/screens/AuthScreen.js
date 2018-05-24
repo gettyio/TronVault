@@ -43,6 +43,7 @@ class AuthScreen extends Component {
 		SplashScreen.hide();
 		this.enableDeepLinks();
 		this.loadData();
+		alert('For security reasons, please, turn off your phone internet before login.')
 		//this.debugKeychain();
 	}
 

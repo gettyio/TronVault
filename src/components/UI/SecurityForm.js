@@ -64,7 +64,7 @@ class SecurityForm extends Component {
             autoCorrect={false}
             autoCapitalize={'none'}
             clearButtonMode={'always'}
-            placeholder="Password"
+            placeholder="Type your password here."
             onChangeText={password => this.setState({ password })}
             value={password}
             underlineColorAndroid={'white'}
@@ -77,8 +77,8 @@ class SecurityForm extends Component {
             Please, disconnect your phone from the network before log in. You can use the airplane mode.
           </SmallMessageLabel>
           <SmallMessageLabel>
-            Enter the passphrase that should be used to protect your secrets. This passphrase is specific for this device and will be stored in a secure storage on your phone.
-            Make sure to remember the password, as you'll need it when you sign transactions with Tron Mobile. Keep your passphrase secure.
+            Enter the password to protect your secrets. The password can't be changed later. This password is specific for this device and will be stored in your phone.
+            Make sure to remember your password, as you'll need it when you sign transactions with TronVault. Keep your password secure.
           </SmallMessageLabel>
         </CardFlex>
         <KeyboardAvoidingView behavior="position">
