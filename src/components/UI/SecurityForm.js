@@ -82,7 +82,6 @@ class SecurityForm extends Component {
           <View style={{ alignSelf: 'center' }}>
             <Button
               ref={ref => (this.savePasswordButton = ref)}
-              foregroundColor={'#4cd964'}
               onPress={this.savePassword}
               foregroundColor={'white'}
               backgroundColor={'#4cd964'}

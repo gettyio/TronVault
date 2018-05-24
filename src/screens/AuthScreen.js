@@ -32,7 +32,7 @@ import { createVoteTransaction } from './../utils/transactionUtil';
 @inject('appStore') @observer
 class AuthScreen extends Component {
 	static navigationOptions = {
-		header: null
+		header: null,
 	};
 
 	state = {
@@ -43,22 +43,22 @@ class AuthScreen extends Component {
 		SplashScreen.hide();
 		this.enableDeepLinks();
 		this.loadData();
-		this.testCreateVote();
-		//this.deleteSeed();
+		//this.debugKeychain();
 	}
 
 	componentWillUnmount() {
 		Linking.removeEventListener('url', this.handleAppLinkURL)
 	}
 
-	testCreateVote = () => {
-		// createVoteTransaction();
-	}
-
-	deleteSeed = () => {
-		const uniqueId = DeviceInfo.getUniqueID();
-		const seedKey = sha256(`ss-${uniqueId}`);
-		SInfo.deleteItem(seedKey.toString(), {})
+	debugKeychain = async () => {
+		try {
+			const items = await SInfo.getAllItems({});
+			items.forEach(element => {
+				console.log(element)
+			});
+		} catch (error) {
+			alert(error.message);
+		}
 	}
 
 	loadSeed = () => {
@@ -75,7 +75,6 @@ class AuthScreen extends Component {
 						const seed = bytes.toString(crypto.enc.Utf8)
 						if (seed) {
 							appStore.set('seed', seed);
-							//console.log('seed',seed)
 							navigation.navigate('Secrets');
 						} else {
 							navigation.navigate('CreateVault');

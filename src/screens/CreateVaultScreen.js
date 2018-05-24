@@ -59,7 +59,9 @@ class CreateVaultScreen extends Component {
 	}
 
 	componentDidMount() {
-		const mnemonic = bip39.generateMnemonic(512, (n) => randomize('0', n));
+		// Generate 12 words mnemonic: bip39.generateMnemonic(128);
+		// Generate 24 words mnemonic:  bip39.generateMnemonic(512, (n) => randomize('0', n));
+		const mnemonic =  bip39.generateMnemonic(256, (n) => randomize('0', n));
 		//console.log(mnemonic)
 		this.setState({ mnemonic })
 	}
@@ -102,19 +104,19 @@ class CreateVaultScreen extends Component {
 			}
 
 			if (tab === 'restore') {
-				if (seedValue.trim().split(/\s+/g).length === 24) {
+				if (seedValue.trim().split(/\s+/g).length === 12) {
 					this.setState({ successMessage: 'The seed combination is valid. We are restoring your master key...' })
 					this.createSeed();
 				} else {
 					this.restoreSeedButton.error();
 					this.restoreSeedButton.reset();
-					this.setState({ errorMessage: 'Invalid seed combination, you must type a seed with 24 words.' })
+					this.setState({ errorMessage: 'Invalid seed combination, you must type a seed with 12 words.' })
 				}
 			}
 		} else {
 			this.restoreSeedButton.error();
 			this.restoreSeedButton.reset();
-			this.setState({ errorMessage: 'Invalid seed. Please, check if any of your 24 words has any typo.' })
+			this.setState({ errorMessage: 'Invalid seed. Please, check if any of your 12 words has any typo.' })
 		}
 	}
 
@@ -156,7 +158,7 @@ class CreateVaultScreen extends Component {
 						onChangeText={text => this.setState({ seedValue: text.toLowerCase() })}
 						underlineColorAndroid={'white'}
 						value={seedValue}
-						placeholder="Please, type your seed words here."
+						placeholder="Please, type your 12 seed words here"
 					>
 					</InsertSeedInput>
 					{errorMessage && <ErrorLabel>{errorMessage}</ErrorLabel>}
@@ -167,7 +169,7 @@ class CreateVaultScreen extends Component {
 							foregroundColor={'#276cf2'}
 							onPress={this.restoreSeed}
 							foregroundColor={'white'}
-							backgroundColor={'#276cf2'}
+							backgroundColor={'#4cd964'}
 							successColor={'#276cf2'}
 							errorColor={'#ff3b30'}
 							errorIconColor={'white'}
@@ -204,7 +206,7 @@ class CreateVaultScreen extends Component {
 		return (
 			<View style={{ padding: 16, height: '100%' }}>
 				<View>
-					<VaultWordsText>Please, write down these 24 words on a paper. These 24 words are the only way to restore your Tron Mobile private keys if you loose or change your device. Make sure to keep it safe!</VaultWordsText>
+					<VaultWordsText>Please, write down these 12 words on a paper. These 12 words are the only way to restore your TronVault private keys if you loose or change your device. Make sure to keep it safe!</VaultWordsText>
 					{this.renderWords()}
 				</View>
 				<View style={{ alignItems: 'center' }}>
@@ -213,7 +215,7 @@ class CreateVaultScreen extends Component {
 						foregroundColor={'red'}
 						onPress={() => this.setCurrentTab('continue')}
 						foregroundColor={'white'}
-						backgroundColor={'red'}
+						backgroundColor={'#4cd964'}
 						successColor={'red'}
 						errorColor={'#ff3b30'}
 						errorIconColor={'white'}
@@ -232,7 +234,7 @@ class CreateVaultScreen extends Component {
 							this.setCurrentTab('restore');
 						}}
 						foregroundColor={'white'}
-						backgroundColor={'#276cf2'}
+						backgroundColor={'black'}
 						successColor={'#276cf2'}
 						errorColor={'#ff3b30'}
 						errorIconColor={'white'}
