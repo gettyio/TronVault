@@ -81,7 +81,7 @@ color: #344B67;
 
 export const SmallMessageLabel = styled.Text`
 	padding-top: 16px;
-  font-size: 10px;
+  font-size: 12px;
   color: white;
 `
 
