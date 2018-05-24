@@ -129,6 +129,7 @@ class TransactionDetail extends Component {
 	// }
 
 	componentWillUnmount() {
+		const { appStore } = this.props;
 		const currentTransaction = appStore.set('currentTransaction', undefined);
 
 	}
@@ -296,7 +297,7 @@ class TransactionDetail extends Component {
 					{showCode && <View style={{ alignItems: 'center' }}>
 						<QRCode
 							value={showCode}
-							size={width * 0.5}
+							size={width * 0.9}
 							fgColor='white'
 						/>
 					</View>}
