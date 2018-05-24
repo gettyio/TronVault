@@ -110,13 +110,13 @@ class CreateVaultScreen extends Component {
 				} else {
 					this.restoreSeedButton.error();
 					this.restoreSeedButton.reset();
-					this.setState({ errorMessage: 'Invalid seed combination, you must type a seed with 24 words.' })
+					this.setState({ errorMessage: 'Invalid seed combination, you must type a seed with 12 words.' })
 				}
 			}
 		} else {
 			this.restoreSeedButton.error();
 			this.restoreSeedButton.reset();
-			this.setState({ errorMessage: 'Invalid seed. Please, check if any of your 24 words has any typo.' })
+			this.setState({ errorMessage: 'Invalid seed. Please, check if any of your 12 words has any typo.' })
 		}
 	}
 
@@ -158,7 +158,7 @@ class CreateVaultScreen extends Component {
 						onChangeText={text => this.setState({ seedValue: text.toLowerCase() })}
 						underlineColorAndroid={'white'}
 						value={seedValue}
-						placeholder="Please, type your seed words here."
+						placeholder="Please, type your 12 seed words here"
 					>
 					</InsertSeedInput>
 					{errorMessage && <ErrorLabel>{errorMessage}</ErrorLabel>}
@@ -169,7 +169,7 @@ class CreateVaultScreen extends Component {
 							foregroundColor={'#276cf2'}
 							onPress={this.restoreSeed}
 							foregroundColor={'white'}
-							backgroundColor={'#276cf2'}
+							backgroundColor={'#4cd964'}
 							successColor={'#276cf2'}
 							errorColor={'#ff3b30'}
 							errorIconColor={'white'}
@@ -215,7 +215,7 @@ class CreateVaultScreen extends Component {
 						foregroundColor={'red'}
 						onPress={() => this.setCurrentTab('continue')}
 						foregroundColor={'white'}
-						backgroundColor={'red'}
+						backgroundColor={'#4cd964'}
 						successColor={'red'}
 						errorColor={'#ff3b30'}
 						errorIconColor={'white'}
@@ -234,7 +234,7 @@ class CreateVaultScreen extends Component {
 							this.setCurrentTab('restore');
 						}}
 						foregroundColor={'white'}
-						backgroundColor={'#276cf2'}
+						backgroundColor={'black'}
 						successColor={'#276cf2'}
 						errorColor={'#ff3b30'}
 						errorIconColor={'white'}

@@ -13,6 +13,18 @@ import {
 	LoadButton
 } from './styled';
 import { List, ListItem } from 'react-native-elements'
+import SInfo from 'react-native-sensitive-info';
+import PouchDB from 'pouchdb-react-native'
+import SQLite from 'react-native-sqlite-2'
+import SQLiteAdapterFactory from 'pouchdb-adapter-react-native-sqlite'
+
+const SQLiteAdapter = SQLiteAdapterFactory(SQLite)
+PouchDB.plugin(SQLiteAdapter)
+const secretsDB = new PouchDB('Secrets', { adapter: 'react-native-sqlite' })
+
+PouchDB.plugin(require('pouchdb-upsert'))
+const transactionsDB = new PouchDB('Transactions', { adapter: 'react-native-sqlite' })
+
 
 @inject('appStore') @observer
 class SettingsScreen extends Component {
@@ -27,11 +39,6 @@ class SettingsScreen extends Component {
 						<TitleWrapper>
 							<Title>Settings</Title>
 						</TitleWrapper>
-						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.goBack()}>
-								<Icon name="x-circle" color="white" size={32} />
-							</LoadButton>
-						</LoadButtonWrapper>
 					</Header>
 				</SafeAreaView>
 			)
@@ -45,7 +52,7 @@ class SettingsScreen extends Component {
 			[
 				{
 					text: 'Delete',
-					onPress: () => {},
+					onPress: this.deleteSeed,
 					style: 'cancel'
 				},
 				{ text: 'Close', onPress: () => {} } // Do not button
@@ -61,7 +68,18 @@ class SettingsScreen extends Component {
 			[
 				{
 					text: 'Delete',
-					onPress: () => {},
+					onPress: () => {
+						transactionsDB.allDocs().then(function (result) {
+							// Promise isn't supported by all browsers; you may want to use bluebird
+							return Promise.all(result.rows.map(function (row) {
+							  return transactionsDB.remove(row.id, row.value.rev);
+							}));
+						  }).then(function () {
+							alert('All contracts deleted with success!')
+						  }).catch(function (err) {
+							alert(err.message)
+						  });
+					},
 					style: 'cancel'
 				},
 				{ text: 'Close', onPress: () => {} } // Do not button
@@ -70,11 +88,70 @@ class SettingsScreen extends Component {
 		)
 	}
 
+	deleteAllAddresses = () => {
+		Alert.alert(
+			`Are you sure?`,
+			`This action will destroy all addresses. Are you sure?`,
+			[
+				{
+					text: 'Delete',
+					onPress: () => {
+						secretsDB.allDocs().then(function (result) {
+							// Promise isn't supported by all browsers; you may want to use bluebird
+							return Promise.all(result.rows.map(function (row) {
+							  return secretsDB.remove(row.id, row.value.rev);
+							}));
+						  }).then(function () {
+							alert('All addresses deleted with success!');
+						  }).catch(function (err) {
+							alert(err.message)
+						  });
+					},
+					style: 'cancel'
+				},
+				{ text: 'Close', onPress: () => {} } // Do not button
+			],
+			{ cancelable: false }
+		)
+	}
+
+	deleteSeed = async () => {
+		try {
+			const { appStore, navigation } = this.props
+			const items = await SInfo.getAllItems({});
+			items.forEach(async element => {
+				await SInfo.deleteItem(element.key, {});
+			});
+
+			const emptyStore = {
+				sk: undefined,
+				pwd: undefined,
+				seed: undefined,
+				secretList: undefined,
+				isAddModalVisible: false,
+				isAddSecretModalVisible: false,
+				isSecurityRequired: false,
+				isDetailModalVisible: false,
+				currentXdr: undefined,
+				currentLink: undefined,
+				currentAccount: undefined,
+				currentTransaction: undefined,
+				securityFormError: undefined,
+				balances: []
+			  }
+			  appStore.replace(emptyStore);
+			navigation.navigate('Auth');
+		} catch (error) {
+			alert(error.message);
+		}
+	}
+	
+
 	render() {
 		const { appStore, navigation } = this.props
 		const defaultList = [
 			{
-				name: 'Manage Seed',
+				name: 'My seed words',
 				icon: 'lock',
 				onPress: ()=> {
 					navigation.navigate('ManageSeed')
@@ -85,14 +162,21 @@ class SettingsScreen extends Component {
 
 			{
 				name: 'Delete all contracts',
-				icon: 'close',
+				icon: 'delete',
 				onPress: ()=> {
 					this.deleteAllContracts();
 				}
 			},
 			{
+				name: 'Delete all addresses',
+				icon: 'delete',
+				onPress: ()=> {
+					this.deleteAllAddresses();
+				}
+			},			
+			{
 				name: 'Reset all data',
-				icon: 'close',
+				icon: 'autorenew',
 				onPress: ()=> {
 					this.deleteAllData();
 				}
