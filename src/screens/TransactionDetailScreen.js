@@ -2,22 +2,16 @@ import React, { Component, Fragment } from 'react'
 import {
 	SafeAreaView, View, Text, Alert,
 	Clipboard, ActivityIndicator,
-	TouchableOpacity, ScrollView, Linking, Picker
+	TouchableOpacity, ScrollView, Linking, Picker,
+	Dimensions
 } from 'react-native'
-import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view'
 import Button from 'react-native-micro-animated-button'
 import Icon from 'react-native-vector-icons/Feather'
-import ActionSheet from 'react-native-actionsheet'
 import { observer, inject } from 'mobx-react'
-import SInfo from 'react-native-sensitive-info';
 import { List, ListItem, Card } from 'react-native-elements'
+import QRCode from 'react-native-qrcode';
 import uuid from 'uuid/v4'
-import bip39 from 'bip39'
-import base64 from 'base-64'
-import base64js from 'base64-js'
-import crypto from 'crypto-js'
-import sha256 from 'crypto-js/sha256';
-import { get, sortBy } from 'lodash'
+import qs from 'qs';
 import { generateTronKeypair } from './../utils/bipUtil';
 import { signDataTransaction } from "../utils/transactionUtil";
 import PouchDB from 'pouchdb-react-native'
@@ -35,33 +29,12 @@ import {
 } from './styled';
 import styled from 'styled-components';
 
-const DetailBox = styled.View`
-width: 90%;
-height: auto;
-flex-direction: column;
-justify-content: flex-start;
-background-color: white;
-`
-
-const DetailRow = styled.View`
-flex-direction: row;
-justify-content: space-between;
-`
-const DetailLabel = styled.Text`
-font-size: 15px;
-margin: 6px;
-font-weight: bold;
-color: #2e3666;
-`
-const DetailText = styled.Text`
-font-size: 15px;
-margin: 6px;
-`
-
 const SQLiteAdapter = SQLiteAdapterFactory(SQLite)
 PouchDB.plugin(SQLiteAdapter)
 const db = new PouchDB('Secrets', { adapter: 'react-native-sqlite' })
 const db2 = new PouchDB('Transactions', { adapter: 'react-native-sqlite' })
+
+const { width } = Dimensions.get('window');
 
 @inject('appStore') @observer
 class TransactionDetail extends Component {
@@ -75,7 +48,7 @@ class TransactionDetail extends Component {
 							<Title>Contract Detail</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.goBack()}>
+							<LoadButton onPress={() => navigation.navigate('Home')}>
 								<Icon name="x-circle" color="white" size={32} />
 							</LoadButton>
 						</LoadButtonWrapper>
@@ -86,24 +59,14 @@ class TransactionDetail extends Component {
 	};
 
 	state = {
-		tabView: {
-			index: 0,
-			routes: [
-				{ key: 'display', title: 'Operation' },
-				{ key: 'envelop', title: 'Envelope' },
-				{ key: 'signed', title: 'Signed' }
-			]
-		},
 		secrets: [],
 		options: [],
 		secretSelected: null,
-		showSecurityForm: false,
-		loadingSign: false,
 		loadingData: true,
 		transactionDetail: null,
-		isSigned: false,
+		isSigningNow: false,
 		pk: '',
-		transactionSigned: '',
+		transactionSigned: null,
 	}
 
 	componentDidMount() {
@@ -155,28 +118,22 @@ class TransactionDetail extends Component {
 		}
 	}
 
-	submitSignature = index => {
-		const { secrets, secretSelected } = this.state;
-		const secret = secrets[index]
 
-		this.showConfirmSignatureAlert(secretSelected)
-	}
+	// handleSignPress = () => {
+	// 	const { appStore } = this.props
+	// 	const { isSigningNow, secretSelected } = this.state;
+	// 	const currentTransaction = appStore.get('currentTransaction');
 
-	handleSignPress = () => {
-		const { appStore } = this.props
-		const { isSigned, secretSelected } = this.state;
-		const currentTransaction = appStore.get('currentTransaction');
-		const { status } = currentTransaction;
-
-		if (isSigned) this.submitTransaction();
-		else if (status === 'SUBMITTED') this.retrySubmit();
-		else this.confirmSignTransaction(secretSelected.doc);
-	}
+	// 	if (isSigningNow) this.submitTransaction();
+	// 	else this.confirmSignTransaction(secretSelected.doc);
+	// }
 
 
-	confirmSignTransaction = async secret => {
+	confirmSignTransaction = async () => {
 		const { appStore, navigation } = this.props
+		const { secretSelected } = this.state;
 		const currentTransaction = appStore.get('currentTransaction');
+		const secret = secretSelected.doc;
 		try {
 			const seed = appStore.get('seed');
 
@@ -185,44 +142,56 @@ class TransactionDetail extends Component {
 			const sk = keypair.privateKey;
 
 			const transactionString = currentTransaction.data;
-			const transactionSignedString = await signDataTransaction(sk, transactionString);
+			const transactionSigned = await signDataTransaction(sk, transactionString);
 
-			this.setState({ pk, transactionSigned: transactionSignedString, isSigned: true }, this.signButton.reset());
+			const tx = {
+				...currentTransaction,
+				pk,
+				transactionSigned,
+				status: 'SIGNED',
+				createdAt: new Date().toISOString()
+			};
+			await db2.put({ _id: uuid(), ...tx });
+			this.setState({ pk, transactionSigned, isSigningNow: true }, this.signButton.reset());
 			return;
 		} catch (error) {
 			alert(error.message || error);
+			this.signButton.error();
 			navigation.goBack();
 		} finally {
-			this.signButton.reset();
+			appStore.get('currentTransaction', undefined);
 		}
 	}
 
 	submitTransaction = async () => {
 		const { appStore, navigation } = this.props
 		const { pk, transactionSigned } = this.state;
-		const currentTransaction = appStore.get('currentTransaction')
-
-		const tx = {
-			...currentTransaction,
-			pk,
-			transactionSigned,
-			status: 'SUBMITTED',
-			createdAt: new Date().toISOString()
-		};
-
+		const currentTransaction = appStore.get('currentTransaction');
 		try {
-			currentTransaction.URL += `/${pk}/${transactionSigned}/${Date.now()}`;
-			const supported = await Linking.canOpenURL(currentTransaction.URL)
-			await db2.put({ _id: uuid(), ...tx });
-			if (supported) Linking.openURL(currentTransaction.URL);
-			this.signButton.success();
-			navigation.goBack();
+			if (currentTransaction.from === 'mobile') {
+				currentTransaction.URL += `/${transactionSigned}`;
+				const supported = await Linking.canOpenURL(currentTransaction.URL)
+				if (supported) {
+					Linking.openURL(currentTransaction.URL);
+
+					this.signButton.success();
+				}
+				navigation.navigate('Home');
+				return;
+			} else {
+				currentTransaction.URL += `/${pk}/${transactionSigned}/${Date.now()}`;
+			}
 
 		} catch (error) {
 			alert(error.message)
 			this.signButton.reset();
+			appStore.get('currentTransaction', undefined);
+			navigation.navigate('Home');
+
+		} finally {
+			appStore.get('currentTransaction', undefined);
 		}
-		return;
+
 	}
 
 	retrySubmit = async () => {
@@ -230,7 +199,7 @@ class TransactionDetail extends Component {
 		const currentTransaction = appStore.get('currentTransaction')
 		try {
 			const { pk, transactionSigned, URL } = currentTransaction;
-			URL += `/${pk}/${transactionSigned}/${Date.now()}`;
+			URL += `/ ${pk} / ${transactionSigned} / ${Date.now()}`;
 			alert(URL);
 
 			const supported = await Linking.canOpenURL(URL)
@@ -244,14 +213,16 @@ class TransactionDetail extends Component {
 		}
 
 	}
+	firstLetterCapitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 
 	renderTxDetail = () => {
-		const { transactionDetail, secretSelected, isSigned } = this.state;
+		const { transactionDetail, secretSelected, isSigningNow } = this.state;
 		const { appStore } = this.props;
 		const currentTransaction = appStore.get('currentTransaction');
 		//If submited then it was signed
-		const signedStatus = isSigned || currentTransaction.status === 'SUBMITTED';
-		const submitedStatus = currentTransaction.status === 'SUBMITTED';
+		const signedStatus = isSigningNow || currentTransaction.status === 'SIGNED';
+		const submitedStatus = currentTransaction.status === 'SIGNED';
 
 		let details = [];
 
@@ -269,7 +240,7 @@ class TransactionDetail extends Component {
 				rightTitleContainerStyle={2}
 				hideChevron
 				key={detail}
-				title={detail.toString()}
+				title={this.firstLetterCapitalize(detail.toString())}
 				titleStyle={{ color: '#2e3666', fontWeight: '600' }}
 				rightTitle={transactionDetail[detail].toString()}
 			/>)
@@ -283,32 +254,22 @@ class TransactionDetail extends Component {
 				rightIcon={signedStatus ?
 					<Icon name="check" color="green" size={20} /> :
 					<Icon name="x" color="red" size={20} />}
-			/>
-			, <ListItem
-				rightTitleStyle={{ color: '#383838' }}
-				key={'submitted'}
-				titleStyle={{ color: '#2e3666', fontWeight: '600' }}
-				title="Submitted"
-				rightIcon={
-					submitedStatus ?
-						<Icon name="check" color="green" size={20} /> :
-						<Icon name="x" color="red" size={20} />}
 			/>);
 
 		return <List containerStyle={{ margin: 0 }} title="Contract Data">
 			{details}
 		</List>;
 	}
+
+
 	render() {
 		const { appStore, toggleModal } = this.props
-		const { secretSelected, loadingData, transactionDetail, isSigned } = this.state
+		const { secretSelected, loadingData, transactionDetail, isSigningNow, transactionSigned } = this.state
 		const securityFormError = appStore.get('securityFormError');
 		const currentTransaction = appStore.get('currentTransaction');
-		let isSubmitted = false;
-
-		if (currentTransaction) {
-			isSubmitted = currentTransaction.status === 'SUBMITTED';
-		}
+		let canSubmit = false;
+		let canSign = false;
+		let showCode = null;
 
 		if (loadingData) {
 			return <ActivityIndicator size="large" color="#0000ff" />
@@ -326,40 +287,51 @@ class TransactionDetail extends Component {
 			</ContainerFlex>
 			)
 		}
+		if (currentTransaction) {
+			canSubmit = isSigningNow && currentTransaction.from === 'mobile';
+			canSign = !isSigningNow && currentTransaction.status !== 'SIGNED';
+			showCode = (isSigningNow && transactionSigned) || currentTransaction.transactionSigned;
+		}
 		return (
 			<ContainerFlex style={{ backgroundColor: '#ffffff' }}>
-				<Text style={{ alignSelf: 'center', marginTop: 10, paddingBottom: 0, color: '#3e3666', fontWeight: '500' }}>Contract Data</Text>
-				{transactionDetail && this.renderTxDetail()}
-				{!isSubmitted && !isSigned && <Button
-					onPress={this.handleSignPress}
-					ref={ref => (this.signButton = ref)}
-					foregroundColor={'white'}
-					backgroundColor={isSigned ? 'blue' : '#4cd964'}
-					successColor={'#4cd964'}
-					errorColor={'#ff3b30'}
-					errorIconColor={'white'}
-					successIconColor={'white'}
-					successIconName="check"
-					label={"Sign"}
-					maxWidth={100}
-					style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
-				/>}
-				{!isSubmitted && isSigned && < Button
-					onPress={this.handleSignPress}
-					ref={ref => (this.signButton = ref)}
-					foregroundColor={'white'}
-					backgroundColor={'#0046b7'}
-					successColor={'#4cd964'}
-					errorColor={'#ff3b30'}
-					errorIconColor={'white'}
-					successIconColor={'white'}
-					successIconName="check"
-					label={"Submit"}
-					maxWidth={150}
-					style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
-				/>}
-				{isSubmitted && <Fragment>
-					< Button
+				<ScrollView>
+					<Text style={{ alignSelf: 'center', marginVertical: 10, paddingBottom: 0, color: '#3e3666', fontWeight: '500' }}>Contract Data</Text>
+					{showCode && <View style={{ alignItems: 'center' }}>
+						<QRCode
+							value={showCode}
+							size={width * 0.5}
+							fgColor='white'
+						/>
+					</View>}
+					{canSubmit && < Button
+						onPress={this.submitTransaction}
+						ref={ref => (this.signButton = ref)}
+						foregroundColor={'white'}
+						backgroundColor={'#0046b7'}
+						successColor={'#4cd964'}
+						errorColor={'#ff3b30'}
+						errorIconColor={'white'}
+						successIconColor={'white'}
+						successIconName="check"
+						label={"Submit"}
+						maxWidth={150}
+						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
+					/>}
+					{transactionDetail && this.renderTxDetail()}
+					{canSign && <Button
+						onPress={this.confirmSignTransaction}
+						ref={ref => (this.signButton = ref)}
+						foregroundColor={'white'}
+						backgroundColor={isSigningNow ? 'blue' : '#4cd964'}
+						successColor={'#4cd964'}
+						errorColor={'#ff3b30'}
+						errorIconColor={'white'}
+						successIconColor={'white'}
+						successIconName="check"
+						label={"Sign"}
+						maxWidth={100}
+						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }} />}
+					{!canSign && <Button
 						onPress={this.deleteTransaction}
 						ref={ref => (this.deleteButton = ref)}
 						foregroundColor={'white'}
@@ -372,8 +344,9 @@ class TransactionDetail extends Component {
 						label={"Delete"}
 						maxWidth={150}
 						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
-					/>
-				</Fragment>}
+					/>}
+
+				</ScrollView>
 			</ContainerFlex>
 		)
 	}
