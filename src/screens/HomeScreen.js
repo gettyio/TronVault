@@ -63,7 +63,7 @@ class HomeScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Contracts</Title>
+							<Title>My Contracts</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={params.toggleAddModal}>
@@ -72,7 +72,12 @@ class HomeScreen extends Component {
 						</LoadButtonWrapper>
 					</Header>
 				</SafeAreaView>
-			)
+			),
+			tabBarOnPress({ jumpToIndex, scene }) {
+				// now we have access to Component methods
+				params.loadData();
+				jumpToIndex(scene.index);
+			}
 		};
 	};
 
@@ -86,7 +91,7 @@ class HomeScreen extends Component {
 	}
 
 	componentWillMount() {
-		this.props.navigation.setParams({ toggleAddModal: this.toggleAddModal });
+		this.props.navigation.setParams({ toggleAddModal: this.toggleAddModal, loadData: this.loadTransactions });
 	}
 
 	componentDidMount() {

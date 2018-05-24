@@ -110,27 +110,30 @@ export const SecretLabel = styled.Text`
 `
 
 export const SeedWord = styled.Text`
-	color: #2e3666;
+	color: #1d2028;
 	font-size: 16px;
 	padding: 2px;
 `
 
 export const SeedBox = styled.View`
-	margin-top: 8px; 
-	padding: 4px; 
+	margin-top: 16px; 
+	margin-bottom: 16px; 
+	padding: 16px; 
 	flex-direction: row;
 	flex-wrap: wrap; 
-	border-width: 2px; 
-	border-color: #2e3666;
+  border-width: 2px; 
+  border-radius: 12px;
+	border-color: #cccccc;
 `
 
 export const InsertSeedInput = styled.TextInput`
   font-size: 16px;
   border-width: 2px;
-  border-color: #2e3666;
+  border-color: #cccccc;
+  border-radius: 12px;
   width: 100%;
   height: 90px;
-  padding: 8px;
+  padding: 16px;
 `
 export const AboutNamesText = styled.Text`
   font-size: 14px;
@@ -153,11 +156,11 @@ export const AboutHeader = styled.Text`
 `
 export const AuthLogoView = styled.View`
   align-self: center;
-  backgroundColor: white;
+  backgroundColor: #2f3864;
   margin-top: 16px; 
 `
 export const AuthVersionText = styled.Text`
-  color: gray;
+  color: white;
   font-size: 10px; 
 `
 export const AuthVersionWrapper = styled.View`

@@ -51,7 +51,7 @@ class SecurityForm extends Component {
     }
 
     return (
-      <View style={{ padding: 16, backgroundColor: 'white' }}>
+      <View style={{ flex: 1, paddingLeft: 16, paddingRight: 16, backgroundColor: '#2f3864' }}>
         {!hideClose && (
           <CloseButton onPress={close}>
             <Icon name="times-circle" color={closeColor || 'white'} size={32} />
@@ -82,7 +82,6 @@ class SecurityForm extends Component {
           <View style={{ alignSelf: 'center' }}>
             <Button
               ref={ref => (this.savePasswordButton = ref)}
-              foregroundColor={'#4cd964'}
               onPress={this.savePassword}
               foregroundColor={'white'}
               backgroundColor={'#4cd964'}

@@ -16,7 +16,7 @@ export const Card = styled.View`
 
 export const CardFlex = styled.View`
   width: 100%;
-  background-color: white;
+  background-color: #2f3864;
   border-radius: 16px;
   padding: 8px;
   align-self: center;
@@ -82,7 +82,7 @@ color: #344B67;
 export const SmallMessageLabel = styled.Text`
 	padding-top: 16px;
   font-size: 10px;
-  color: #464646;
+  color: white;
 `
 
 export const PasswordFormTitle = styled.Text`
@@ -90,7 +90,7 @@ export const PasswordFormTitle = styled.Text`
   padding-top: 8px;
   font-size: 16px;
   font-weight: 700;
-  color: #464646;
+  color: white;
 `
 export const CardLabel = styled.Text`
   font-size: 12px;

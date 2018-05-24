@@ -3,6 +3,8 @@ import { keccak256 } from 'js-sha3';
 import {byteArray2hexStr, hexStr2byteArray} from "./src/utils/crypto/code";
 import { SHA256 } from "./src/utils/crypto/crypto";
 import { encode58 } from "./src/utils/crypto/base58";
+import bip39 from 'bip39';
+import randomize from 'randomatic'
 
 const mnemonic0 = '00000000000000000000000000000000';
 const mnemonic12 = 'ceiling present easily example nurse silver ecology plug accident decrease special aware';
@@ -32,4 +34,6 @@ const biptest = (mnemonic, vn) => {
 
 }
 
-biptest(mnemonic24, 44176716);
+//biptest(mnemonic24, 44176716);
+const mnemonic = bip39.generateMnemonic(128);
+console.log( mnemonic)

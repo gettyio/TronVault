@@ -32,7 +32,7 @@ import { createVoteTransaction } from './../utils/transactionUtil';
 @inject('appStore') @observer
 class AuthScreen extends Component {
 	static navigationOptions = {
-		header: null
+		header: null,
 	};
 
 	state = {
@@ -43,19 +43,19 @@ class AuthScreen extends Component {
 		SplashScreen.hide();
 		// this.enableDeepLinks();
 		this.loadData();
-		this.testCreateVote();
-		//this.deleteSeed();
+		//this.debugKeychain();
 	}
 
 
-	testCreateVote = () => {
-		// createVoteTransaction();
-	}
-
-	deleteSeed = () => {
-		const uniqueId = DeviceInfo.getUniqueID();
-		const seedKey = sha256(`ss-${uniqueId}`);
-		SInfo.deleteItem(seedKey.toString(), {})
+	debugKeychain = async () => {
+		try {
+			const items = await SInfo.getAllItems({});
+			items.forEach(element => {
+				console.log(element)
+			});
+		} catch (error) {
+			alert(error.message);
+		}
 	}
 
 	loadSeed = () => {
@@ -175,7 +175,7 @@ class AuthScreen extends Component {
 		const isSecurityRequired = appStore.get('isSecurityRequired')
 		const securityFormError = appStore.get('securityFormError')
 		return (
-			<SafeAreaView style={{ flex: 1, alignContent: 'flex-start', backgroundColor: 'white' }}>
+			<SafeAreaView style={{ flex: 1, alignContent: 'flex-start', backgroundColor: '#2f3864' }}>
 				<ScrollView
 					keyboardShouldPersistTaps="always"
 					keyboardDismissMode="interactive"
@@ -189,6 +189,7 @@ class AuthScreen extends Component {
 							submit={this.submit}
 							error={securityFormError}
 							close={this.toggleModal}
+							hideClose
 						/>
 						<AuthVersionWrapper>
 							<AuthVersionText>

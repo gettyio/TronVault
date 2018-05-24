@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {  View, SafeAreaView, Modal, Alert } from 'react-native';
+import {  View, SafeAreaView, Modal, Alert, StatusBar } from 'react-native';
 import { observer, inject } from 'mobx-react'
 import Icon from 'react-native-vector-icons/Feather'
 import sha256 from 'crypto-js/sha256';
@@ -32,7 +32,7 @@ class ManageSeedScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>Manage Seed</Title>
+							<Title>My seed words</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={() => navigation.goBack()}>
@@ -56,7 +56,7 @@ class ManageSeedScreen extends Component {
 		const pwd0 = appStore.get('pwd');
 		const encodedPwd = sha256(pwd);
 		if (encodedPwd.toString() === pwd0){
-			this.setState({ isSecurityRequired: false, isAuthenticated: true });
+			setTimeout(()=> this.setState({ isSecurityRequired: false, isAuthenticated: true }), 600)
 			appStore.set('securityFormError', undefined)
 		} else {
 			appStore.set('securityFormError', 'Invalid password! ')
@@ -118,7 +118,7 @@ class ManageSeedScreen extends Component {
 		const seedKey = sha256(`ss-${uniqueId}`);
 		appStore.set('seed', undefined);
 		SInfo.deleteItem(seedKey.toString(), {});
-		navigation.navigate('AuthModal');
+		navigation.navigate('Auth');
 	}
 
 	render() {
@@ -128,13 +128,13 @@ class ManageSeedScreen extends Component {
 		const securityFormError = appStore.get('securityFormError');
 		const seed = appStore.get('seed');
 		return (
-			<View style={{ padding: 16 }}>
-				<Text h4>Current Seed</Text>
+			<View style={{ backgroundColor: 'white', padding: 16 }}>
+				<Text h6>Please, write down these 12 words on a paper. These 12 words are the only way to restore your TronVault private keys if you loose or change your device. Make sure to keep it safe!</Text>
 				{ seed && this.renderWords()}
 				{ seed && this.renderDeleteButton()}
 				{ isSecurityRequired &&
-					<Modal isVisible={isSecurityRequired} onRequestClose={()=>{}}>
-					<SafeAreaView style={{ flex: 1 }}>
+				<Modal isVisible={isSecurityRequired} onRequestClose={()=>{}}>
+					<SafeAreaView style={{ height: '100%', backgroundColor: '#2f3864' }}>
 						<SecurityForm
 							appStore={appStore}
 							submit={this.validatePassword}
@@ -146,6 +146,7 @@ class ManageSeedScreen extends Component {
 					</SafeAreaView>
 				</Modal>
 				}
+				<StatusBar barStyle="light-content" />
 			</View>
 		);
 	}
