@@ -151,7 +151,7 @@ class SettingsScreen extends Component {
 		const { appStore, navigation } = this.props
 		const defaultList = [
 			{
-				name: 'My seed words',
+				name: 'My secret words',
 				icon: 'lock',
 				onPress: ()=> {
 					navigation.navigate('ManageSeed')

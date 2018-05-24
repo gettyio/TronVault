@@ -113,10 +113,6 @@ class SecretsScreen extends Component {
 
 	toggleAddModal = () => {
 		const { appStore } = this.props
-		if (!appStore.get('isAddSecretModalVisible')) {
-			const userPath = `${Math.floor(Math.random() * 9) + 1}${randomize('0', 7)}`
-			this.setState({ userPath })
-		}
 		appStore.set('isAddSecretModalVisible', !appStore.get('isAddSecretModalVisible'));
 	}
 
@@ -234,11 +230,11 @@ class SecretsScreen extends Component {
 										keyboardType={'numeric'}
 										autoCorrect={false}
 										autoFocus={false}
+										placeholder="Type a vault number password."
 										onChangeText={text => this.setState({ userPath: text })}
 										clearButtonMode={'always'}
 										underlineColorAndroid={'white'}
 										value={userPath}
-										style={{ fontWeight: '700' }}
 									/>
 									<View>
 										{hasError && <ErrorLabel>Invalid alias or vault number.</ErrorLabel>}
@@ -263,7 +259,7 @@ class SecretsScreen extends Component {
 									</CreatePairKeyView>
 									<View>
 										<SecretLabel>
-											The number above is your auto generated vault number. Please, take note on paper and keep it safe, you will need it to recover this secret from another device. If have you restored your seed string, please clear this value and type the vault number you want to restore.
+											The number above is your vault number password. Please, take note on paper and keep it safe, you will need it to recover this secret from another device. If have you restored your secret words.
 										</SecretLabel>
 										<SecretLabel weight={'700'}>Create new address </SecretLabel>
 										<SecretLabel>

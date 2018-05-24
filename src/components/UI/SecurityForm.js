@@ -74,6 +74,9 @@ class SecurityForm extends Component {
             {error && <ErrorLabel>{error}</ErrorLabel>}
           </View>
           <SmallMessageLabel>
+            Please, disconnect your phone from the network before log in. You can use the airplane mode.
+          </SmallMessageLabel>
+          <SmallMessageLabel>
             Enter the passphrase that should be used to protect your secrets. This passphrase is specific for this device and will be stored in a secure storage on your phone.
             Make sure to remember the password, as you'll need it when you sign transactions with Tron Mobile. Keep your passphrase secure.
           </SmallMessageLabel>
