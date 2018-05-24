@@ -128,7 +128,10 @@ class TransactionDetail extends Component {
 	// 	else this.confirmSignTransaction(secretSelected.doc);
 	// }
 
+	componentWillUnmount() {
+		const currentTransaction = appStore.set('currentTransaction', undefined);
 
+	}
 	confirmSignTransaction = async () => {
 		const { appStore, navigation } = this.props
 		const { secretSelected } = this.state;
@@ -158,8 +161,6 @@ class TransactionDetail extends Component {
 			alert(error.message || error);
 			this.signButton.error();
 			navigation.goBack();
-		} finally {
-			appStore.get('currentTransaction', undefined);
 		}
 	}
 
@@ -185,11 +186,7 @@ class TransactionDetail extends Component {
 		} catch (error) {
 			alert(error.message)
 			this.signButton.reset();
-			appStore.get('currentTransaction', undefined);
 			navigation.navigate('Home');
-
-		} finally {
-			appStore.get('currentTransaction', undefined);
 		}
 
 	}
