@@ -32,7 +32,7 @@ class ManageSeedScreen extends Component {
 				<SafeAreaView style={{ backgroundColor: '#2e3666' }}>
 					<Header>
 						<TitleWrapper>
-							<Title>My seed words</Title>
+							<Title>My secret seed</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
 							<LoadButton onPress={() => navigation.goBack()}>
