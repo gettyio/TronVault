@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@tronprotocol/wallet-api": "^0.0.35",
+    "@tronscan/client": "^0.0.4",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
     "base-64": "^0.1.0",

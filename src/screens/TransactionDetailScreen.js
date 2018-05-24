@@ -48,7 +48,7 @@ class TransactionDetail extends Component {
 							<Title>Contract Detail</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.navigate('Home')}>
+							<LoadButton onPress={() => navigation.goBack()}>
 								<Icon name="x-circle" color="white" size={32} />
 							</LoadButton>
 						</LoadButtonWrapper>
@@ -269,7 +269,11 @@ class TransactionDetail extends Component {
 		let showCode = null;
 
 		if (loadingData) {
-			return <ActivityIndicator size="large" color="#0000ff" />
+			return (
+			<View style={{ flex: 1 }}>
+				<ActivityIndicator size="large" color="#0000ff" />
+			</View>
+			)
 		}
 		if (!secretSelected) {
 			return (<ContainerFlex style={{ backgroundColor: '#d5eef7', justifyContent: 'center', padding: 0 }}>
@@ -296,7 +300,7 @@ class TransactionDetail extends Component {
 					{showCode && <View style={{ alignItems: 'center' }}>
 						<QRCode
 							value={showCode}
-							size={width * 0.5}
+							size={width * 0.8}
 							fgColor='white'
 						/>
 					</View>}
