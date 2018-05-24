@@ -175,7 +175,7 @@ class AuthScreen extends Component {
 		const isSecurityRequired = appStore.get('isSecurityRequired')
 		const securityFormError = appStore.get('securityFormError')
 		return (
-			<SafeAreaView style={{ flex: 1, alignContent: 'flex-start', backgroundColor: 'white' }}>
+			<SafeAreaView style={{ flex: 1, alignContent: 'flex-start', backgroundColor: '#2f3864' }}>
 				<ScrollView
 					keyboardShouldPersistTaps="always"
 					keyboardDismissMode="interactive"
@@ -189,6 +189,7 @@ class AuthScreen extends Component {
 							submit={this.submit}
 							error={securityFormError}
 							close={this.toggleModal}
+							hideClose
 						/>
 						<AuthVersionWrapper>
 							<AuthVersionText>

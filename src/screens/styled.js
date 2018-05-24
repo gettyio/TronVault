@@ -156,11 +156,11 @@ export const AboutHeader = styled.Text`
 `
 export const AuthLogoView = styled.View`
   align-self: center;
-  backgroundColor: white;
+  backgroundColor: #2f3864;
   margin-top: 16px; 
 `
 export const AuthVersionText = styled.Text`
-  color: gray;
+  color: white;
   font-size: 10px; 
 `
 export const AuthVersionWrapper = styled.View`
