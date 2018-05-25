@@ -33,7 +33,6 @@ const SQLiteAdapter = SQLiteAdapterFactory(SQLite)
 PouchDB.plugin(SQLiteAdapter)
 const db = new PouchDB('Secrets', { adapter: 'react-native-sqlite' })
 const db2 = new PouchDB('Transactions', { adapter: 'react-native-sqlite' })
-
 const { width } = Dimensions.get('window');
 
 @inject('appStore') @observer
@@ -48,7 +47,7 @@ class TransactionDetail extends Component {
 							<Title>Contract Detail</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.navigate('Home')}>
+							<LoadButton onPress={() => navigation.goBack()}>
 								<Icon name="x-circle" color="white" size={32} />
 							</LoadButton>
 						</LoadButtonWrapper>
@@ -219,6 +218,8 @@ class TransactionDetail extends Component {
 		const { appStore } = this.props;
 		const currentTransaction = appStore.get('currentTransaction');
 		//If submited then it was signed
+		if (!currentTransaction) return;
+
 		const signedStatus = isSigningNow || currentTransaction.status === 'SIGNED';
 		const submitedStatus = currentTransaction.status === 'SIGNED';
 
@@ -329,7 +330,21 @@ class TransactionDetail extends Component {
 						label={"Sign"}
 						maxWidth={100}
 						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }} />}
-					{!canSign && <Button
+					{isSigningNow && < Button
+						onPress={() => this.props.navigation.goBack()}
+						ref={ref => (this.signButton = ref)}
+						foregroundColor={'white'}
+						backgroundColor={'#0046b7'}
+						successColor={'#4cd964'}
+						errorColor={'#ff3b30'}
+						errorIconColor={'white'}
+						successIconColor={'white'}
+						successIconName="check"
+						label={"Ok"}
+						maxWidth={150}
+						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
+					/>}
+					{(!canSign && !isSigningNow) && <Button
 						onPress={this.deleteTransaction}
 						ref={ref => (this.deleteButton = ref)}
 						foregroundColor={'white'}
