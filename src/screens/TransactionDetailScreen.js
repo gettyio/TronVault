@@ -208,8 +208,8 @@ class TransactionDetail extends Component {
 			alert(error.message)
 			this.signButton.reset();
 		}
-
 	}
+	
 	firstLetterCapitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 
@@ -271,7 +271,11 @@ class TransactionDetail extends Component {
 		let showCode = null;
 
 		if (loadingData) {
-			return <ActivityIndicator size="large" color="#0000ff" />
+			return (
+			<View style={{ flex: 1 }}>
+				<ActivityIndicator size="large" color="#0000ff" />
+			</View>
+			)
 		}
 		if (!secretSelected) {
 			return (<ContainerFlex style={{ backgroundColor: '#d5eef7', justifyContent: 'center', padding: 0 }}>
