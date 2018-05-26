@@ -180,7 +180,8 @@ class SendForm extends Component {
 								<Text style={{ color: 'white', marginTop: 16 }}>Scan the QRCode to add the contract.</Text>
 							</View>
 						)}
-						cameraStyle={{ height: '100%' }}
+                        cameraStyle={{ height: '100%' }}
+                        permissionDialogMessage="To scan contracts the app needs your permission to access the camera."
 						onRead={this.onSuccessQRCode}
 					/>
 

@@ -209,8 +209,8 @@ class TransactionDetail extends Component {
 			alert(error.message)
 			this.signButton.reset();
 		}
-
 	}
+	
 	firstLetterCapitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 
