@@ -74,10 +74,16 @@ class AuthScreen extends Component {
 						if (seed) {
 							appStore.set('seed', seed);
 
-							if (navigation.state.params && navigation.state.params.tx) {
+							if (navigation.state.params && navigation.state.params.data) {
 								//that means is receiving a deeplink from tron hot
-								appStore.set('currentTransaction', qs.parse(navigation.state.params.tx));
-								navigation.navigate('TransactionDetail');
+								const deepLinkData = qs.parse(navigation.state.params.data)
+								if (deepLinkData.action !== 'getkey') {
+									appStore.set('currentTransaction', deepLinkData);
+									navigation.navigate('TransactionDetail');
+								} else {
+									navigation.navigate('GetKey',{url: deepLinkData.URL});
+								}
+
 							} else {
 								navigation.navigate('Secrets');
 							}
@@ -94,9 +100,14 @@ class AuthScreen extends Component {
 			}
 		} else {
 			//that means is receiving a deeplink from tron hot
-			if (navigation.state.params && navigation.state.params.tx) {
-				appStore.set('currentTransaction', qs.parse(navigation.state.params.tx));
-				navigation.navigate('TransactionDetail');
+			if (navigation.state.params && navigation.state.params.data) {
+				const deepLinkData = qs.parse(navigation.state.params.data)
+				if (deepLinkData.action !== 'getkey') {
+					appStore.set('currentTransaction', deepLinkData);
+					navigation.navigate('TransactionDetail');
+				} else {
+					navigation.navigate('GetKey', {url: deepLinkData.URL});
+				}
 			}
 
 		}
