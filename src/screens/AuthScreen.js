@@ -77,9 +77,9 @@ class AuthScreen extends Component {
 								const deepLinkData = qs.parse(navigation.state.params.data)
 								if (deepLinkData.action !== 'getkey') {
 									appStore.set('currentTransaction', deepLinkData);
-									navigation.navigate('TransactionDetail');
+									navigation.navigate('TransactionDetail', { mobile: true });
 								} else {
-									navigation.navigate('GetKey',{url: deepLinkData.URL});
+									navigation.navigate('GetKey', { url: deepLinkData.URL, mobile: true });
 								}
 
 							} else {
@@ -102,9 +102,9 @@ class AuthScreen extends Component {
 				const deepLinkData = qs.parse(navigation.state.params.data)
 				if (deepLinkData.action !== 'getkey') {
 					appStore.set('currentTransaction', deepLinkData);
-					navigation.navigate('TransactionDetail');
+					navigation.navigate('TransactionDetail', { mobile: true });
 				} else {
-					navigation.navigate('GetKey', {url: deepLinkData.URL});
+					navigation.navigate('GetKey', { url: deepLinkData.URL, mobile: true });
 				}
 			}
 
