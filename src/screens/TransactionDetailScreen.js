@@ -330,7 +330,7 @@ class TransactionDetail extends Component {
 						label={"Sign"}
 						maxWidth={100}
 						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }} />}
-					{isSigningNow && < Button
+					{(isSigningNow && !showCode) && < Button
 						onPress={() => this.props.navigation.goBack()}
 						ref={ref => (this.signButton = ref)}
 						foregroundColor={'white'}
