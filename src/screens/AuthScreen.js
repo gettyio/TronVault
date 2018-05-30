@@ -37,13 +37,15 @@ class AuthScreen extends Component {
 
 	state = {
 		firstSecret: undefined,
+		url: ''
 	}
 
 	componentDidMount() {
 		SplashScreen.hide();
-		// this.enableDeepLinks();
+		this.enableDeepLinks();
 		this.loadData();
-		alert('For security reasons, please, turn off your phone internet before login.')
+		// alert('For security reasons, please, turn off your phone internet before login.')
+		// alert(`DATA > ${JSON.stringify()}`)
 		//this.debugKeychain();
 	}
 
@@ -61,6 +63,7 @@ class AuthScreen extends Component {
 
 	loadSeed = () => {
 		const { appStore, navigation } = this.props
+		const { url } = this.state
 		if (!appStore.get('seed')) {
 			try {
 				const pwd = appStore.get('pwd')
@@ -74,16 +77,16 @@ class AuthScreen extends Component {
 						if (seed) {
 							appStore.set('seed', seed);
 
-							if (navigation.state.params && navigation.state.params.data) {
-								//that means is receiving a deeplink from tron hot
-								const deepLinkData = qs.parse(navigation.state.params.data)
+							if (url) {
+								const deepLinkData = qs.parse(url);
+								console.warn(deepLinkData)
+
 								if (deepLinkData.action !== 'getkey') {
 									appStore.set('currentTransaction', deepLinkData);
 									navigation.navigate('TransactionDetail');
 								} else {
 									navigation.navigate('GetKey',{url: deepLinkData.URL});
 								}
-
 							} else {
 								navigation.navigate('Secrets');
 							}
@@ -112,6 +115,16 @@ class AuthScreen extends Component {
 
 		}
 	}
+
+	handleAppLinkURL = event => {
+		const url = event instanceof String ? event : event.url
+		if (url) {
+			this.setState({ firstSecret: undefined, url });
+			this.loadData();
+		} else {
+				alert('Invalid Transaction! Please contact the support.')
+		}
+}
 
 	enableDeepLinks = () => {
 		Linking.addEventListener('url', this.handleAppLinkURL)

@@ -17,7 +17,7 @@ import QRCodeReaderScreen from './screens/QRCodeReaderScreen';
 import store from './store'
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation'
 
-const prefix = Platform.OS == 'android' ? 'tronvault://tronvault/' : 'tronvault://';
+const prefix = Platform.OS == 'android' ? 'tronvault2://tronvault2/' : 'tronvault2://';
 
 const NavigationStack = TabNavigator(
   {
