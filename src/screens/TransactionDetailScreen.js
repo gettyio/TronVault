@@ -47,7 +47,14 @@ class TransactionDetail extends Component {
 							<Title>Contract Detail</Title>
 						</TitleWrapper>
 						<LoadButtonWrapper>
-							<LoadButton onPress={() => navigation.goBack()}>
+							<LoadButton onPress={() => {
+								if (navigation.state.params && navigation.state.params.mobile) {
+									navigation.navigate('Home')
+								} else {
+									navigation.goBack()
+								}
+							}
+							}>
 								<Icon name="x-circle" color="white" size={32} />
 							</LoadButton>
 						</LoadButtonWrapper>
@@ -168,15 +175,11 @@ class TransactionDetail extends Component {
 		const { pk, transactionSigned } = this.state;
 		const currentTransaction = appStore.get('currentTransaction');
 		try {
-			if (currentTransaction.from === 'mobile') {
-				currentTransaction.URL += `/${transactionSigned}`;
-				Linking.openURL(currentTransaction.URL);
-				navigation.navigate('Home');
-				return;
-			} else {
-				currentTransaction.URL += `/${pk}/${transactionSigned}/${Date.now()}`;
-			}
 
+			currentTransaction.URL += `/${transactionSigned}`;
+			Linking.openURL(currentTransaction.URL);
+			navigation.navigate('Home');
+			return;
 		} catch (error) {
 			alert(error.message)
 			this.signButton.reset();
@@ -191,7 +194,6 @@ class TransactionDetail extends Component {
 		try {
 			const { pk, transactionSigned, URL } = currentTransaction;
 			URL += `/ ${pk} / ${transactionSigned} / ${Date.now()}`;
-			alert(URL);
 
 			await Linking.openURL(URL);
 
@@ -202,7 +204,7 @@ class TransactionDetail extends Component {
 			this.signButton.reset();
 		}
 	}
-	
+
 	firstLetterCapitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 
@@ -265,9 +267,9 @@ class TransactionDetail extends Component {
 
 		if (loadingData) {
 			return (
-			<View style={{ flex: 1 }}>
-				<ActivityIndicator size="large" color="#0000ff" />
-			</View>
+				<View style={{ flex: 1 }}>
+					<ActivityIndicator size="large" color="#0000ff" />
+				</View>
 			)
 		}
 		if (!secretSelected) {
