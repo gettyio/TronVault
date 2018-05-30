@@ -175,9 +175,10 @@ class TransactionDetail extends Component {
 		const { pk, transactionSigned } = this.state;
 		const currentTransaction = appStore.get('currentTransaction');
 		try {
-
-			currentTransaction.URL += `/${transactionSigned}`;
-			Linking.openURL(currentTransaction.URL);
+			if (currentTransaction.from === 'mobile') {
+				currentTransaction.URL += `/${transactionSigned}`;
+				Linking.openURL(currentTransaction.URL);
+			}
 			navigation.navigate('Home');
 			return;
 		} catch (error) {
