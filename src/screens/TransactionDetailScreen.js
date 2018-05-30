@@ -33,7 +33,6 @@ const SQLiteAdapter = SQLiteAdapterFactory(SQLite)
 PouchDB.plugin(SQLiteAdapter)
 const db = new PouchDB('Secrets', { adapter: 'react-native-sqlite' })
 const db2 = new PouchDB('Transactions', { adapter: 'react-native-sqlite' })
-
 const { width } = Dimensions.get('window');
 
 @inject('appStore') @observer
@@ -140,7 +139,6 @@ class TransactionDetail extends Component {
 		const secret = secretSelected.doc;
 		try {
 			const seed = appStore.get('seed');
-
 			const keypair = generateTronKeypair(seed, secret.vn);
 			const pk = keypair.base58Address;
 			const sk = keypair.privateKey;
@@ -172,12 +170,7 @@ class TransactionDetail extends Component {
 		try {
 			if (currentTransaction.from === 'mobile') {
 				currentTransaction.URL += `/${transactionSigned}`;
-				const supported = await Linking.canOpenURL(currentTransaction.URL)
-				if (supported) {
-					Linking.openURL(currentTransaction.URL);
-
-					this.signButton.success();
-				}
+				Linking.openURL(currentTransaction.URL);
 				navigation.navigate('Home');
 				return;
 			} else {
@@ -200,8 +193,7 @@ class TransactionDetail extends Component {
 			URL += `/ ${pk} / ${transactionSigned} / ${Date.now()}`;
 			alert(URL);
 
-			const supported = await Linking.canOpenURL(URL)
-			if (supported) Linking.openURL(URL);
+			await Linking.openURL(URL);
 
 			this.signButton.success();
 			navigation.goBack();
@@ -219,6 +211,8 @@ class TransactionDetail extends Component {
 		const { appStore } = this.props;
 		const currentTransaction = appStore.get('currentTransaction');
 		//If submited then it was signed
+		if (!currentTransaction) return;
+
 		const signedStatus = isSigningNow || currentTransaction.status === 'SIGNED';
 		const submitedStatus = currentTransaction.status === 'SIGNED';
 
@@ -333,7 +327,21 @@ class TransactionDetail extends Component {
 						label={"Sign"}
 						maxWidth={100}
 						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }} />}
-					{!canSign && <Button
+					{isSigningNow && < Button
+						onPress={() => this.props.navigation.goBack()}
+						ref={ref => (this.signButton = ref)}
+						foregroundColor={'white'}
+						backgroundColor={'#0046b7'}
+						successColor={'#4cd964'}
+						errorColor={'#ff3b30'}
+						errorIconColor={'white'}
+						successIconColor={'white'}
+						successIconName="check"
+						label={"Ok"}
+						maxWidth={150}
+						style={{ marginLeft: 16, borderWidth: 0, alignSelf: 'center' }}
+					/>}
+					{(!canSign && !isSigningNow) && <Button
 						onPress={this.deleteTransaction}
 						ref={ref => (this.deleteButton = ref)}
 						foregroundColor={'white'}

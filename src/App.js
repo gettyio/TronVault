@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Feather'
 import IconFA from 'react-native-vector-icons/FontAwesome'
 import HomeScreen from './screens/HomeScreen'
 import SecretsScreen from './screens/SecretsScreen'
+import GetKeyScreen from './screens/GetKeyScreen'
 import AuthScreen from './screens/AuthScreen'
 import AboutScreen from './screens/AboutScreen'
 import CreateVaultScreen from './screens/CreateVaultScreen'
@@ -83,7 +84,10 @@ const RootStack = StackNavigator(
     },
     Auth: {
       screen: AuthScreen,
-      path: 'auth/:tx',
+      path: 'auth/:data',
+    },
+    GetKey:{
+      screen: GetKeyScreen,
     },
     CreateVault: {
       screen: CreateVaultScreen,

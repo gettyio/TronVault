@@ -20,8 +20,26 @@
 	<string>1.5.11</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>tronvault</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>tronvault</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>34</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tronvault</string>
+		<string>tronvault2</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

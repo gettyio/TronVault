@@ -120,7 +120,7 @@ class HomeScreen extends Component {
 			}
 			return false;
 		} catch (error) {
-			console.log(error);
+			//(error);
 			return false;
 
 		} finally {
@@ -134,23 +134,6 @@ class HomeScreen extends Component {
 		if (currentXdr) {
 			this.decodeXdr(currentXdr)
 		}
-	}
-
-	sendToViewer = () => {
-		// Todo: remove mock data
-		const url = `stellar-signer://stellar-signer?${qs.stringify({
-			type: 'decode', xdr: 'AAAAAFIBKYc47PZpoxxY5Acltd9IaRANeap3Ja+FZg9fVtSBAAAAZABu6EUAAAACAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAr+SzF6CyMZracAojHWYWqhzdJZW+OiI9csaw1Nl4EZMAAAAAAAAAAAX14QAAAAAAAAAAAA=='
-		})}`;
-
-		Linking.canOpenURL(url)
-			.then(supported => {
-				if (!supported) {
-					console.log("Can't handle url: " + url)
-				} else {
-					return Linking.openURL(url)
-				}
-			})
-			.catch(err => console.error('An error occurred', err))
 	}
 
 	toggleDetailModal = () => {
