@@ -198,10 +198,7 @@ class SecretsScreen extends Component {
         })
         const deepLinkUrl = `${navigation.state.params.url}/${dataToSend}`;
 
-        const supported = await Linking.canOpenURL(deepLinkUrl)
-        if (supported) {
-            Linking.openURL(deepLinkUrl);
-        }
+        await Linking.openURL(deepLinkUrl);
         navigation.navigate('Home');
         return;
     }

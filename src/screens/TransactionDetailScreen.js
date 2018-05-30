@@ -139,7 +139,6 @@ class TransactionDetail extends Component {
 		const secret = secretSelected.doc;
 		try {
 			const seed = appStore.get('seed');
-
 			const keypair = generateTronKeypair(seed, secret.vn);
 			const pk = keypair.base58Address;
 			const sk = keypair.privateKey;
@@ -171,12 +170,7 @@ class TransactionDetail extends Component {
 		try {
 			if (currentTransaction.from === 'mobile') {
 				currentTransaction.URL += `/${transactionSigned}`;
-				const supported = await Linking.canOpenURL(currentTransaction.URL)
-				if (supported) {
-					Linking.openURL(currentTransaction.URL);
-
-					this.signButton.success();
-				}
+				Linking.openURL(currentTransaction.URL);
 				navigation.navigate('Home');
 				return;
 			} else {
@@ -199,8 +193,7 @@ class TransactionDetail extends Component {
 			URL += `/ ${pk} / ${transactionSigned} / ${Date.now()}`;
 			alert(URL);
 
-			const supported = await Linking.canOpenURL(URL)
-			if (supported) Linking.openURL(URL);
+			await Linking.openURL(URL);
 
 			this.signButton.success();
 			navigation.goBack();
