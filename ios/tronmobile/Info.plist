@@ -26,20 +26,20 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>tronvault2</string>
+			<string>tronvault</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>tronvault2</string>
+				<string>tronvault</string>
 			</array>
 		</dict>
 	</array>
-  <key>LSApplicationQueriesSchemes</key>
-  <array>
-    <string>tronvault</string>
-    <string>tronvault2</string>
-  </array>
 	<key>CFBundleVersion</key>
 	<string>34</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tronvault</string>
+		<string>tronvault2</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
