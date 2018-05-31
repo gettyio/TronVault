@@ -4,12 +4,12 @@ import { observer, inject } from 'mobx-react'
 import Icon from 'react-native-vector-icons/Feather'
 import {
 	Screen,
-	ContainerFlex, 
-	Container, 
-	Header, 
-	Title, 
-	TitleWrapper, 
-	LoadButtonWrapper, 
+	ContainerFlex,
+	Container,
+	Header,
+	Title,
+	TitleWrapper,
+	LoadButtonWrapper,
 	LoadButton
 } from './styled';
 import { List, ListItem } from 'react-native-elements'
@@ -55,7 +55,7 @@ class SettingsScreen extends Component {
 					onPress: this.deleteSeed,
 					style: 'cancel'
 				},
-				{ text: 'Close', onPress: () => {} } // Do not button
+				{ text: 'Close', onPress: () => { } } // Do not button
 			],
 			{ cancelable: false }
 		)
@@ -72,17 +72,17 @@ class SettingsScreen extends Component {
 						transactionsDB.allDocs().then(function (result) {
 							// Promise isn't supported by all browsers; you may want to use bluebird
 							return Promise.all(result.rows.map(function (row) {
-							  return transactionsDB.remove(row.id, row.value.rev);
+								return transactionsDB.remove(row.id, row.value.rev);
 							}));
-						  }).then(function () {
+						}).then(function () {
 							alert('All contracts deleted with success!')
-						  }).catch(function (err) {
+						}).catch(function (err) {
 							alert(err.message)
-						  });
+						});
 					},
 					style: 'cancel'
 				},
-				{ text: 'Close', onPress: () => {} } // Do not button
+				{ text: 'Close', onPress: () => { } } // Do not button
 			],
 			{ cancelable: false }
 		)
@@ -99,17 +99,17 @@ class SettingsScreen extends Component {
 						secretsDB.allDocs().then(function (result) {
 							// Promise isn't supported by all browsers; you may want to use bluebird
 							return Promise.all(result.rows.map(function (row) {
-							  return secretsDB.remove(row.id, row.value.rev);
+								return secretsDB.remove(row.id, row.value.rev);
 							}));
-						  }).then(function () {
+						}).then(function () {
 							alert('All addresses deleted with success!');
-						  }).catch(function (err) {
+						}).catch(function (err) {
 							alert(err.message)
-						  });
+						});
 					},
 					style: 'cancel'
 				},
-				{ text: 'Close', onPress: () => {} } // Do not button
+				{ text: 'Close', onPress: () => { } } // Do not button
 			],
 			{ cancelable: false }
 		)
@@ -119,8 +119,21 @@ class SettingsScreen extends Component {
 		try {
 			const { appStore, navigation } = this.props
 			const items = await SInfo.getAllItems({});
-			items.forEach(async element => {
-				await SInfo.deleteItem(element.key, {});
+
+			for (let element in items) {
+				await SInfo.deleteItem(element, {});
+			}
+
+			//Delete all address from BD
+			secretsDB.allDocs().then(function (result) {
+				// Promise isn't supported by all browsers; you may want to use bluebird
+				return Promise.all(result.rows.map(function (row) {
+					return secretsDB.remove(row.id, row.value.rev);
+				}));
+			}).then(function () {
+				// alert('All addresses deleted with success!');
+			}).catch(function (err) {
+				alert(err.message)
 			});
 
 			const emptyStore = {
@@ -138,14 +151,14 @@ class SettingsScreen extends Component {
 				currentTransaction: undefined,
 				securityFormError: undefined,
 				balances: []
-			  }
-			  appStore.replace(emptyStore);
+			}
+			appStore.replace(emptyStore);
 			navigation.navigate('Auth');
 		} catch (error) {
 			alert(error.message);
 		}
 	}
-	
+
 
 	render() {
 		const { appStore, navigation } = this.props
@@ -153,7 +166,7 @@ class SettingsScreen extends Component {
 			{
 				name: 'My secret seed',
 				icon: 'lock',
-				onPress: ()=> {
+				onPress: () => {
 					navigation.navigate('ManageSeed')
 				}
 			}
@@ -163,26 +176,26 @@ class SettingsScreen extends Component {
 			{
 				name: 'Delete all contracts',
 				icon: 'delete',
-				onPress: ()=> {
+				onPress: () => {
 					this.deleteAllContracts();
 				}
 			},
 			{
 				name: 'Delete all addresses',
 				icon: 'delete',
-				onPress: ()=> {
+				onPress: () => {
 					this.deleteAllAddresses();
 				}
-			},			
+			},
 			{
 				name: 'Reset all data',
 				icon: 'autorenew',
-				onPress: ()=> {
+				onPress: () => {
 					this.deleteAllData();
 				}
 			}
 		];
-		
+
 		return (
 			<View>
 				<List style={{ backgroundColor: 'white' }}>
@@ -192,7 +205,7 @@ class SettingsScreen extends Component {
 								key={index}
 								leftIcon={{ name: item.icon }}
 								title={item.name}
-								onPress={()=> item.onPress() }
+								onPress={() => item.onPress()}
 							/>
 						))
 					}
@@ -204,13 +217,13 @@ class SettingsScreen extends Component {
 								key={index}
 								leftIcon={{ name: item.icon }}
 								title={item.name}
-								onPress={()=> item.onPress() }
+								onPress={() => item.onPress()}
 							/>
 						))
 					}
-				</List>				
+				</List>
 			</View>
-			
+
 		)
 	}
 }
