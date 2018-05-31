@@ -142,6 +142,7 @@ class AuthScreen extends Component {
 		try {
 			const encodedPwd = sha256(pwd);
 			const ss = `${encodedPwd.toString()}:${pwd}`;
+			const allItems = await SInfo.getAllItems({});
 			const pwdKey = sha256(`ss-${uniqueId}-${encodedPwd.toString()}`)
 			const uniqueId = DeviceInfo.getUniqueID();
 			const pwdencoded = await SInfo.getItem(pwdKey.toString(), {})
