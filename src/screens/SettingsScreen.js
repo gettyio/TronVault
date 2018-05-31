@@ -115,6 +115,8 @@ class SettingsScreen extends Component {
 		)
 	}
 
+
+
 	deleteSeed = async () => {
 		try {
 			const { appStore, navigation } = this.props
@@ -130,12 +132,20 @@ class SettingsScreen extends Component {
 				return Promise.all(result.rows.map(function (row) {
 					return secretsDB.remove(row.id, row.value.rev);
 				}));
-			}).then(function () {
-				// alert('All addresses deleted with success!');
 			}).catch(function (err) {
 				alert(err.message)
 			});
 
+			//Delete all transactions
+			transactionsDB.allDocs().then(function (result) {
+				// Promise isn't supported by all browsers; you may want to use bluebird
+				return Promise.all(result.rows.map(function (row) {
+					return transactionsDB.remove(row.id, row.value.rev);
+				}));
+			}).catch(function (err) {
+				alert(err.message)
+			});
+			
 			const emptyStore = {
 				sk: undefined,
 				pwd: undefined,
