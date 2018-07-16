@@ -118,16 +118,6 @@ export const generateKeypair = (mnemonic, vn) => {
 }
 
 export const generateTronKeypair = (mnemonic, vn) => {
-//   const keypair = generateKeypair(mnemonic, vn)
-//   let pubKey = keypair.pubKey.slice(2);
-//   let sha3 = keccak256(hexStr2byteArray(pubKey));
-//   let address = "A0" +keypair.address
-//   let sha256_0 = SHA256(hexStr2byteArray(address));
-//   let sha256_1 = SHA256(sha256_0);
-//   let checkSum = byteArray2hexStr(sha256_1).slice(0, 8);
-//   let addchecksum = address + checkSum;
-//   let base58Address = encode58(hexStr2byteArray(addchecksum));
-
   const keypair = generateKeypair(mnemonic, vn)
   let pubKey = keypair.pubKey.slice(2);
   let sha3 = keccak256(hexStr2byteArray(pubKey));
@@ -138,12 +128,5 @@ export const generateTronKeypair = (mnemonic, vn) => {
   let addchecksum = address + checkSum;
   let base58Address = encode58(hexStr2byteArray(addchecksum));
 
-//   console.log("Address:", base58Address);
-//   console.log('Private:', keypair.pwd);
-
-	// console.log('Private Key:', keypair.pwd);
-	// console.log('Password = base64(Private Key): ', keypair.pk);
-	// console.log('Public Key:', keypair.pubKey);
-	//{ address, password, privateKey, pubKey}
-	return { base58Address, address: keypair.address, pubKey: keypair.pubKey, pwd: keypair.pwd, privateKey: keypair.privateKey }
+  return { base58Address, address: keypair.address, pubKey: keypair.pubKey, pwd: keypair.pwd, privateKey: keypair.privateKey }
 }
